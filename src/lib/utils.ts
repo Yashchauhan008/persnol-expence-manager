@@ -25,6 +25,15 @@ export function todayISO(): string {
   return new Date().toISOString().split('T')[0];
 }
 
+/** Inclusive `YYYY-MM-DD` range for a calendar month (`month` is 1–12). */
+export function getMonthIsoRange(year: number, month: number): { from: string; to: string } {
+  const pad = (n: number) => String(n).padStart(2, '0');
+  const from = `${year}-${pad(month)}-01`;
+  const lastDay = new Date(year, month, 0).getDate();
+  const to = `${year}-${pad(month)}-${pad(lastDay)}`;
+  return { from, to };
+}
+
 /** Normalize API date strings for `<input type="date">` (YYYY-MM-DD). */
 export function toInputDate(value: string | undefined | null): string {
   if (!value) return '';

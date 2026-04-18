@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { TrendingUp, TrendingDown, HandCoins, ArrowRight, Plus } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -9,7 +10,7 @@ import { useGetMonthlySummary } from '@/hooks/useSummary';
 import { useGetIncomes } from '@/hooks/useIncome';
 import { useGetExpenses } from '@/hooks/useExpenses';
 import { useGetLoans } from '@/hooks/useLoans';
-import { formatDate } from '@/lib/utils';
+import { formatDate, getMonthIsoRange } from '@/lib/utils';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend,
 } from 'recharts';
@@ -21,9 +22,14 @@ export default function Dashboard() {
   const year = now.getFullYear();
   const month = now.getMonth() + 1;
 
+  const { from: monthFrom, to: monthTo } = useMemo(
+    () => getMonthIsoRange(year, month),
+    [year, month]
+  );
+
   const { data: summary, isLoading: summaryLoading } = useGetMonthlySummary(year, month);
-  const { data: incomeData } = useGetIncomes({ limit: 5 });
-  const { data: expenseData } = useGetExpenses({ limit: 5 });
+  const { data: incomeData } = useGetIncomes({ limit: 5, from: monthFrom, to: monthTo });
+  const { data: expenseData } = useGetExpenses({ limit: 5, from: monthFrom, to: monthTo });
   const { data: loanGivenData } = useGetLoans({ type: 'given', status: 'pending', limit: 3 });
   const { data: loanTakenData } = useGetLoans({ type: 'taken', status: 'pending', limit: 3 });
 
@@ -40,7 +46,10 @@ export default function Dashboard() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-slate-900">Dashboard</h1>
-          <p className="text-sm text-slate-500">{MONTH_NAMES[month - 1]} {year} overview</p>
+          <p className="text-sm text-slate-500">
+            {MONTH_NAMES[month - 1]} {year} — summary, chart, and income/expense lists all use this
+            calendar month.
+          </p>
         </div>
         <div className="flex gap-2">
           <Button asChild size="sm">
@@ -57,7 +66,8 @@ export default function Dashboard() {
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-slate-500 flex items-center gap-2">
-              <TrendingUp className="h-4 w-4 text-emerald-500" /> Total Income
+              <TrendingUp className="h-4 w-4 text-emerald-500" /> Total Income{' '}
+              <span className="font-normal text-slate-400">({MONTH_NAMES[month - 1]})</span>
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -72,7 +82,8 @@ export default function Dashboard() {
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-slate-500 flex items-center gap-2">
-              <TrendingDown className="h-4 w-4 text-red-500" /> Total Expenses
+              <TrendingDown className="h-4 w-4 text-red-500" /> Total Expenses{' '}
+              <span className="font-normal text-slate-400">({MONTH_NAMES[month - 1]})</span>
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -104,7 +115,8 @@ export default function Dashboard() {
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-slate-500 flex items-center gap-2">
-              <HandCoins className="h-4 w-4 text-amber-500" /> Active Loans
+              <HandCoins className="h-4 w-4 text-amber-500" /> New loans{' '}
+              <span className="font-normal text-slate-400">({MONTH_NAMES[month - 1]})</span>
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-1">
@@ -150,7 +162,7 @@ export default function Dashboard() {
         {/* Recent Income */}
         <Card>
           <CardHeader className="flex-row items-center justify-between space-y-0 pb-3">
-            <CardTitle className="text-base">Recent Income</CardTitle>
+            <CardTitle className="text-base">Income — {MONTH_NAMES[month - 1]} {year}</CardTitle>
             <Button asChild variant="ghost" size="sm">
               <Link to="/income">View all <ArrowRight className="h-3 w-3" /></Link>
             </Button>
@@ -174,7 +186,7 @@ export default function Dashboard() {
         {/* Recent Expenses */}
         <Card>
           <CardHeader className="flex-row items-center justify-between space-y-0 pb-3">
-            <CardTitle className="text-base">Recent Expenses</CardTitle>
+            <CardTitle className="text-base">Expenses — {MONTH_NAMES[month - 1]} {year}</CardTitle>
             <Button asChild variant="ghost" size="sm">
               <Link to="/expenses">View all <ArrowRight className="h-3 w-3" /></Link>
             </Button>
@@ -207,6 +219,10 @@ export default function Dashboard() {
             </Button>
           </CardHeader>
           <CardContent className="space-y-2">
+            <p className="text-xs text-slate-400 -mt-1 mb-2">
+              Open loans (any month). The summary card above counts only loans created in{' '}
+              {MONTH_NAMES[month - 1]}.
+            </p>
             {loanGivenData?.data.length === 0 && (
               <p className="text-sm text-slate-400 text-center py-4">No active loans given</p>
             )}
@@ -234,6 +250,10 @@ export default function Dashboard() {
             </Button>
           </CardHeader>
           <CardContent className="space-y-2">
+            <p className="text-xs text-slate-400 -mt-1 mb-2">
+              Open loans (any month). The summary card above counts only loans created in{' '}
+              {MONTH_NAMES[month - 1]}.
+            </p>
             {loanTakenData?.data.length === 0 && (
               <p className="text-sm text-slate-400 text-center py-4">No active loans taken</p>
             )}

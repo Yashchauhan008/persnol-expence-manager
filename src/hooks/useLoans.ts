@@ -9,6 +9,8 @@ import type {
   CreateLoanData, Loan, LoanListParams, SettleLoanData, UpdateLoanData
 } from '@/types/loan';
 import type { PaginatedResponse } from '@/types/income';
+import { useAuth } from '@/context/AuthContext';
+import { summaryKeys } from '@/hooks/useSummary';
 
 export const loanKeys = {
   all: ['loans'] as const,
@@ -17,8 +19,9 @@ export const loanKeys = {
 };
 
 export function useGetLoans(params?: LoanListParams) {
+  const { user } = useAuth();
   return useQuery({
-    queryKey: loanKeys.lists(params),
+    queryKey: [...loanKeys.lists(params), user?.id],
     queryFn: async () => {
       const res = await getLoans(params);
       return res.data as PaginatedResponse<Loan>;
@@ -27,8 +30,9 @@ export function useGetLoans(params?: LoanListParams) {
 }
 
 export function useGetLoan(id: string) {
+  const { user } = useAuth();
   return useQuery({
-    queryKey: loanKeys.details(id),
+    queryKey: [...loanKeys.details(id), user?.id],
     queryFn: async () => {
       const res = await getLoan(id);
       return res.data.data as Loan;
@@ -43,6 +47,7 @@ export function useCreateLoan() {
     mutationFn: (data: CreateLoanData) => createLoan(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: loanKeys.all });
+      queryClient.invalidateQueries({ queryKey: summaryKeys.all });
       toast.success('Loan recorded');
     },
   });
@@ -54,6 +59,7 @@ export function useUpdateLoan() {
     mutationFn: ({ id, data }: { id: string; data: UpdateLoanData }) => updateLoan(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: loanKeys.all });
+      queryClient.invalidateQueries({ queryKey: summaryKeys.all });
       toast.success('Loan updated');
     },
   });
@@ -65,6 +71,7 @@ export function useDeleteLoan() {
     mutationFn: (id: string) => deleteLoan(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: loanKeys.all });
+      queryClient.invalidateQueries({ queryKey: summaryKeys.all });
       toast.success('Loan deleted');
     },
   });
@@ -78,7 +85,7 @@ export function useSettleLoan() {
       queryClient.invalidateQueries({ queryKey: loanKeys.all });
       queryClient.invalidateQueries({ queryKey: incomeKeys.all });
       queryClient.invalidateQueries({ queryKey: expenseKeys.all });
-      queryClient.invalidateQueries({ queryKey: ['summary'] });
+      queryClient.invalidateQueries({ queryKey: summaryKeys.all });
       toast.success('Settlement recorded');
     },
   });

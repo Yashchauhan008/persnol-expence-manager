@@ -7,6 +7,8 @@ import type {
   CreateExpenseData, Expense, ExpenseListParams, UpdateExpenseData
 } from '@/types/expense';
 import type { PaginatedResponse } from '@/types/income';
+import { useAuth } from '@/context/AuthContext';
+import { summaryKeys } from '@/hooks/useSummary';
 
 export const expenseKeys = {
   all: ['expenses'] as const,
@@ -15,8 +17,9 @@ export const expenseKeys = {
 };
 
 export function useGetExpenses(params?: ExpenseListParams) {
+  const { user } = useAuth();
   return useQuery({
-    queryKey: expenseKeys.lists(params),
+    queryKey: [...expenseKeys.lists(params), user?.id],
     queryFn: async () => {
       const res = await getExpenses(params);
       return res.data as PaginatedResponse<Expense>;
@@ -25,8 +28,9 @@ export function useGetExpenses(params?: ExpenseListParams) {
 }
 
 export function useGetExpense(id: string) {
+  const { user } = useAuth();
   return useQuery({
-    queryKey: expenseKeys.details(id),
+    queryKey: [...expenseKeys.details(id), user?.id],
     queryFn: async () => {
       const res = await getExpense(id);
       return res.data.data as Expense;
@@ -41,6 +45,7 @@ export function useCreateExpense() {
     mutationFn: (data: CreateExpenseData) => createExpense(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: expenseKeys.all });
+      queryClient.invalidateQueries({ queryKey: summaryKeys.all });
       toast.success('Expense added');
     },
   });
@@ -52,6 +57,7 @@ export function useUpdateExpense() {
     mutationFn: ({ id, data }: { id: string; data: UpdateExpenseData }) => updateExpense(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: expenseKeys.all });
+      queryClient.invalidateQueries({ queryKey: summaryKeys.all });
       toast.success('Expense updated');
     },
   });
@@ -63,6 +69,7 @@ export function useDeleteExpense() {
     mutationFn: (id: string) => deleteExpense(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: expenseKeys.all });
+      queryClient.invalidateQueries({ queryKey: summaryKeys.all });
       toast.success('Expense deleted');
     },
   });

@@ -1,11 +1,12 @@
 import { useState } from 'react';
-import { NavLink, Outlet } from 'react-router-dom';
+import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard, TrendingUp, TrendingDown, HandCoins, Tags,
-  BarChart3, Menu, X, Wallet,
+  BarChart3, Menu, X, Wallet, LogOut,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
+import { useAuth } from '@/context/AuthContext';
 
 const navItems = [
   { to: '/', icon: LayoutDashboard, label: 'Dashboard', end: true },
@@ -19,6 +20,13 @@ const navItems = [
 
 export function AppLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+
+  function handleLogout() {
+    logout();
+    navigate('/login', { replace: true });
+  }
 
   return (
     <div className="flex h-screen bg-slate-50">
@@ -70,7 +78,26 @@ export function AppLayout() {
           ))}
         </nav>
 
-        <div className="p-4 border-t border-slate-200">
+        <div className="p-4 border-t border-slate-200 space-y-3">
+          <div className="min-w-0">
+            <p className="text-xs font-medium text-slate-700 truncate" title={user?.email}>
+              {user?.display_name || user?.email || 'Signed in'}
+            </p>
+            {user?.display_name ? (
+              <p className="text-xs text-slate-400 truncate" title={user.email}>
+                {user.email}
+              </p>
+            ) : null}
+          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            className="w-full justify-start gap-2 text-slate-600"
+            onClick={handleLogout}
+          >
+            <LogOut className="h-4 w-4" />
+            Sign out
+          </Button>
           <p className="text-xs text-slate-400 text-center">Personal Finance Manager</p>
         </div>
       </aside>

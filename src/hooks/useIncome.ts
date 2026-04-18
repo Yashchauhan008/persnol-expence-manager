@@ -4,6 +4,8 @@ import {
   getIncomes, getIncome, createIncome, updateIncome, deleteIncome
 } from '@/services/api/income.api';
 import type { CreateIncomeData, Income, IncomeListParams, PaginatedResponse, UpdateIncomeData } from '@/types/income';
+import { useAuth } from '@/context/AuthContext';
+import { summaryKeys } from '@/hooks/useSummary';
 
 export const incomeKeys = {
   all: ['incomes'] as const,
@@ -12,8 +14,9 @@ export const incomeKeys = {
 };
 
 export function useGetIncomes(params?: IncomeListParams) {
+  const { user } = useAuth();
   return useQuery({
-    queryKey: incomeKeys.lists(params),
+    queryKey: [...incomeKeys.lists(params), user?.id],
     queryFn: async () => {
       const res = await getIncomes(params);
       return res.data as PaginatedResponse<Income>;
@@ -22,8 +25,9 @@ export function useGetIncomes(params?: IncomeListParams) {
 }
 
 export function useGetIncome(id: string) {
+  const { user } = useAuth();
   return useQuery({
-    queryKey: incomeKeys.details(id),
+    queryKey: [...incomeKeys.details(id), user?.id],
     queryFn: async () => {
       const res = await getIncome(id);
       return res.data.data as Income;
@@ -38,6 +42,7 @@ export function useCreateIncome() {
     mutationFn: (data: CreateIncomeData) => createIncome(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: incomeKeys.all });
+      queryClient.invalidateQueries({ queryKey: summaryKeys.all });
       toast.success('Income added');
     },
   });
@@ -49,6 +54,7 @@ export function useUpdateIncome() {
     mutationFn: ({ id, data }: { id: string; data: UpdateIncomeData }) => updateIncome(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: incomeKeys.all });
+      queryClient.invalidateQueries({ queryKey: summaryKeys.all });
       toast.success('Income updated');
     },
   });
@@ -60,6 +66,7 @@ export function useDeleteIncome() {
     mutationFn: (id: string) => deleteIncome(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: incomeKeys.all });
+      queryClient.invalidateQueries({ queryKey: summaryKeys.all });
       toast.success('Income deleted');
     },
   });

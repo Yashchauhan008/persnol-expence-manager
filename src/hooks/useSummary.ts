@@ -1,10 +1,17 @@
 import { useQuery } from '@tanstack/react-query';
 import { getDailySummary, getMonthlySummary, getYearlySummary } from '@/services/api/summary.api';
 import type { Summary } from '@/types/summary';
+import { useAuth } from '@/context/AuthContext';
+
+/** Prefix for all summary queries — invalidate after income/expense/loan changes. */
+export const summaryKeys = {
+  all: ['summary'] as const,
+};
 
 export function useGetDailySummary(date?: string) {
+  const { user } = useAuth();
   return useQuery({
-    queryKey: ['summary', 'daily', date],
+    queryKey: ['summary', 'daily', user?.id, date],
     queryFn: async () => {
       const res = await getDailySummary(date);
       return res.data.data as Summary;
@@ -13,8 +20,9 @@ export function useGetDailySummary(date?: string) {
 }
 
 export function useGetMonthlySummary(year?: number, month?: number) {
+  const { user } = useAuth();
   return useQuery({
-    queryKey: ['summary', 'monthly', year, month],
+    queryKey: ['summary', 'monthly', user?.id, year, month],
     queryFn: async () => {
       const res = await getMonthlySummary(year, month);
       return res.data.data as Summary;
@@ -23,8 +31,9 @@ export function useGetMonthlySummary(year?: number, month?: number) {
 }
 
 export function useGetYearlySummary(year?: number) {
+  const { user } = useAuth();
   return useQuery({
-    queryKey: ['summary', 'yearly', year],
+    queryKey: ['summary', 'yearly', user?.id, year],
     queryFn: async () => {
       const res = await getYearlySummary(year);
       return res.data.data as Summary;
