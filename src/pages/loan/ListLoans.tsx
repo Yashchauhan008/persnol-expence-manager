@@ -7,6 +7,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { AmountBadge } from '@/components/shared/AmountBadge';
 import { LoanStatusBadge } from '@/components/shared/LoanStatusBadge';
 import { ConfirmDialog } from '@/components/shared/ConfirmDialog';
+import { PageHeader } from '@/components/shared/PageHeader';
+import { ListMetricsStrip } from '@/components/shared/ListMetricsStrip';
 import { useGetLoans, useDeleteLoan } from '@/hooks/useLoans';
 import { formatCurrency, formatDate } from '@/lib/utils';
 import type { LoanStatus, LoanType } from '@/types/loan';
@@ -37,50 +39,47 @@ export default function ListLoans() {
   const cardBg = isGiven ? 'bg-emerald-50 border-emerald-100' : 'bg-red-50 border-red-100';
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className={`text-2xl font-bold ${accentColor}`}>
-            Loans {isGiven ? 'Given' : 'Taken'}
-          </h1>
-          <p className="text-sm text-slate-500">
-            {isGiven ? 'Money you lent out — you will receive it back' : 'Money you borrowed — you must return it'}
-          </p>
-        </div>
-        <Button asChild size="sm" className={isGiven ? '' : 'bg-red-600 hover:bg-red-700'}>
+    <div className="space-y-6 sm:space-y-8">
+      <PageHeader
+        title={`Loans ${isGiven ? 'Given' : 'Taken'}`}
+        titleClassName={accentColor}
+        description={
+          isGiven
+            ? 'Money you lent — track principal, remaining balance, and settlements.'
+            : 'Money you borrowed — stay on top of what you still owe.'
+        }
+      >
+        <Button asChild size="sm" variant={isGiven ? 'default' : 'destructive'}>
           <Link to={`/loans/new?type=${type}`}>
-            <Plus className="h-4 w-4" />Record Loan
+            <Plus className="h-4 w-4" />
+            Record loan
           </Link>
         </Button>
-      </div>
+      </PageHeader>
 
       {data?.meta.sum_original_amount !== undefined && data.data.length > 0 && (
-        <Card>
-          <CardContent className="pt-4 flex flex-wrap gap-8 text-sm">
-            <div>
-              <span className="text-slate-500">Total principal (listed)</span>
-              <div className="mt-0.5">
-                <AmountBadge amount={data.meta.sum_original_amount ?? 0} className="text-base" />
-              </div>
-            </div>
-            <div>
-              <span className="text-slate-500">Total remaining (listed)</span>
-              <div className="mt-0.5">
-                <AmountBadge
-                  amount={data.meta.sum_remaining_amount ?? 0}
-                  type={isGiven ? 'income' : 'expense'}
-                  className="text-base"
-                />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        <ListMetricsStrip
+          items={[
+            {
+              label: 'Total principal',
+              hint: 'Listed loans on this page',
+              amount: data.meta.sum_original_amount ?? 0,
+              amountType: 'neutral',
+            },
+            {
+              label: 'Total remaining',
+              hint: isGiven ? 'Still outstanding to you' : 'You still owe',
+              amount: data.meta.sum_remaining_amount ?? 0,
+              amountType: isGiven ? 'income' : 'expense',
+            },
+          ]}
+        />
       )}
 
-      <div className="flex items-center gap-2">
-        <span className="text-sm text-slate-500">Filter by status:</span>
+      <div className="flex flex-wrap items-center gap-3 rounded-xl border border-zinc-200/60 bg-white/60 px-4 py-3 backdrop-blur-sm">
+        <span className="text-sm font-medium text-zinc-600">Status</span>
         <Select value={status} onValueChange={v => { setStatus(v); setPage(1); }}>
-          <SelectTrigger className="w-36">
+          <SelectTrigger className="w-40">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -93,41 +92,46 @@ export default function ListLoans() {
       </div>
 
       {isLoading ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {[...Array(6)].map((_, i) => <div key={i} className="h-36 bg-slate-100 rounded-xl animate-pulse" />)}
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {[...Array(6)].map((_, i) => (
+            <div key={i} className="h-40 animate-pulse rounded-xl bg-zinc-100/90" />
+          ))}
         </div>
       ) : data?.data.length === 0 ? (
-        <div className="text-center py-16">
-          <p className="text-slate-400 mb-3">No loans {type === 'given' ? 'given' : 'taken'} yet</p>
+        <div className="py-16 text-center">
+          <p className="mb-4 text-sm text-zinc-400">No loans {type === 'given' ? 'given' : 'taken'} yet</p>
           <Button asChild size="sm">
             <Link to={`/loans/new?type=${type}`}>Record your first loan</Link>
           </Button>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3">
           {data?.data.map(loan => {
             const settledPct = loan.amount > 0
               ? Math.round(((loan.amount - loan.remaining_amount) / loan.amount) * 100)
               : 0;
 
             return (
-              <Card key={loan.id} className={`border ${cardBg} hover:shadow-md transition-shadow`}>
-                <CardContent className="pt-4 space-y-3">
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <p className="font-semibold text-slate-900">{loan.person_name}</p>
-                      <p className="text-xs text-slate-400">{formatDate(loan.date)}</p>
+              <Card
+                key={loan.id}
+                className={`border transition-[transform,box-shadow] duration-200 ease-out hover:-translate-y-0.5 hover:shadow-lg hover:shadow-indigo-500/8 ${cardBg}`}
+              >
+                <CardContent className="space-y-3 pt-5">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="min-w-0">
+                      <p className="font-semibold tracking-tight text-zinc-900">{loan.person_name}</p>
+                      <p className="text-xs text-zinc-400">{formatDate(loan.date)}</p>
                     </div>
                     <LoanStatusBadge status={loan.status} />
                   </div>
 
-                  <div className="space-y-1">
+                  <div className="space-y-1.5">
                     <div className="flex justify-between text-sm">
-                      <span className="text-slate-500">Original</span>
+                      <span className="text-zinc-500">Original</span>
                       <AmountBadge amount={loan.amount} />
                     </div>
                     <div className="flex justify-between text-sm">
-                      <span className="text-slate-500">Remaining</span>
+                      <span className="text-zinc-500">Remaining</span>
                       <AmountBadge
                         amount={loan.remaining_amount}
                         type={loan.remaining_amount > 0 ? (isGiven ? 'income' : 'expense') : 'neutral'}
@@ -135,39 +139,44 @@ export default function ListLoans() {
                     </div>
                     {loan.due_date && (
                       <div className="flex justify-between text-sm">
-                        <span className="text-slate-500">Due</span>
-                        <span className="text-slate-700">{formatDate(loan.due_date)}</span>
+                        <span className="text-zinc-500">Due</span>
+                        <span className="text-zinc-800">{formatDate(loan.due_date)}</span>
                       </div>
                     )}
                   </div>
 
                   {/* Progress bar */}
                   <div className="space-y-1">
-                    <div className="flex justify-between text-xs text-slate-400">
+                    <div className="flex justify-between text-xs text-zinc-400">
                       <span>Settled</span>
                       <span>{settledPct}% ({formatCurrency(loan.amount - loan.remaining_amount)})</span>
                     </div>
-                    <div className="h-1.5 w-full bg-slate-200 rounded-full overflow-hidden">
+                    <div className="h-1.5 w-full overflow-hidden rounded-full bg-zinc-200/90">
                       <div
-                        className={`h-full rounded-full transition-all ${isGiven ? 'bg-emerald-500' : 'bg-red-400'}`}
+                        className={`h-full rounded-full transition-[width] duration-500 ease-out ${isGiven ? 'bg-gradient-to-r from-teal-400 to-teal-600' : 'bg-gradient-to-r from-rose-400 to-rose-600'}`}
                         style={{ width: `${settledPct}%` }}
                       />
                     </div>
                   </div>
 
-                  {loan.note && <p className="text-xs text-slate-400 italic truncate">{loan.note}</p>}
+                  {loan.note && <p className="truncate text-xs italic text-zinc-400">{loan.note}</p>}
 
                   <div className="flex items-center gap-1 pt-1">
                     <Button asChild variant="outline" size="sm" className="flex-1 text-xs">
-                      <Link to={`/loans/${loan.id}`}><Eye className="h-3 w-3" />Details</Link>
+                      <Link to={`/loans/${loan.id}`}>
+                        <Eye className="h-3 w-3" />
+                        Details
+                      </Link>
                     </Button>
-                    <Button asChild variant="ghost" size="icon">
-                      <Link to={`/loans/${loan.id}/edit`}><Pencil className="h-3.5 w-3.5" /></Link>
+                    <Button asChild variant="ghost" size="icon" className="h-8 w-8 text-zinc-500 hover:text-indigo-600">
+                      <Link to={`/loans/${loan.id}/edit`}>
+                        <Pencil className="h-3.5 w-3.5" />
+                      </Link>
                     </Button>
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="text-red-500 hover:text-red-600"
+                      className="h-8 w-8 text-rose-500 hover:bg-rose-50 hover:text-rose-600"
                       onClick={() => setDeleteId(loan.id)}
                     >
                       <Trash2 className="h-3.5 w-3.5" />
@@ -181,8 +190,8 @@ export default function ListLoans() {
       )}
 
       {data && data.meta.total_pages > 1 && (
-        <div className="flex items-center justify-between pt-2">
-          <p className="text-sm text-slate-500">Page {data.meta.page} of {data.meta.total_pages}</p>
+        <div className="flex items-center justify-between pt-4">
+          <p className="text-sm text-zinc-500">Page {data.meta.page} of {data.meta.total_pages}</p>
           <div className="flex gap-2">
             <Button variant="outline" size="sm" disabled={page <= 1} onClick={() => setPage(p => p - 1)}>Previous</Button>
             <Button variant="outline" size="sm" disabled={page >= data.meta.total_pages} onClick={() => setPage(p => p + 1)}>Next</Button>

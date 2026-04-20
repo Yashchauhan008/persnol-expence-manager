@@ -29,34 +29,45 @@ export function AppLayout() {
   }
 
   return (
-    <div className="flex h-screen bg-slate-50">
+    <div className="flex h-screen min-h-0">
       {sidebarOpen && (
-        <div
-          className="fixed inset-0 z-20 bg-black/40 lg:hidden"
+        <button
+          type="button"
+          className="fixed inset-0 z-20 bg-zinc-950/35 backdrop-blur-[1px] transition-opacity duration-200 ease-out lg:hidden"
+          aria-label="Close menu"
           onClick={() => setSidebarOpen(false)}
         />
       )}
 
       <aside
         className={cn(
-          'fixed inset-y-0 left-0 z-30 flex w-64 flex-col bg-white border-r border-slate-200 transition-transform duration-200 lg:translate-x-0 lg:static lg:z-auto',
+          'fixed inset-y-0 left-0 z-30 flex w-[17rem] flex-col border-r border-white/40 bg-white/70 shadow-[4px_0_24px_-12px_rgba(15,23,42,0.08)] backdrop-blur-xl transition-transform duration-200 ease-out lg:translate-x-0 lg:static lg:z-auto',
           sidebarOpen ? 'translate-x-0' : '-translate-x-full'
         )}
       >
-        <div className="flex h-16 items-center gap-2 px-6 border-b border-slate-200">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-600">
-            <Wallet className="h-5 w-5 text-white" />
+        <div className="flex h-[3.65rem] items-center gap-3 border-b border-zinc-200/60 px-5">
+          <div className="relative flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 text-white shadow-md shadow-indigo-500/35 ring-1 ring-white/25">
+            <Wallet className="h-[1.15rem] w-[1.15rem]" />
+            <span className="pointer-events-none absolute inset-0 rounded-xl bg-gradient-to-t from-transparent to-white/15" />
           </div>
-          <span className="text-lg font-bold text-slate-900">ExpenseManager</span>
+          <div className="min-w-0 flex-1">
+            <span className="block truncate text-[15px] font-semibold tracking-tight text-zinc-900">
+              ExpenseManager
+            </span>
+            <span className="text-[10px] font-medium uppercase tracking-[0.14em] text-zinc-400">
+              Finance
+            </span>
+          </div>
           <button
-            className="ml-auto lg:hidden text-slate-500 hover:text-slate-900"
+            type="button"
+            className="rounded-lg p-1.5 text-zinc-500 transition-colors duration-150 hover:bg-zinc-100 hover:text-zinc-900 lg:hidden"
             onClick={() => setSidebarOpen(false)}
           >
             <X className="h-5 w-5" />
           </button>
         </div>
 
-        <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-1">
+        <nav className="flex-1 space-y-0.5 overflow-y-auto px-3 py-4">
           {navItems.map(({ to, icon: Icon, label, end }) => (
             <NavLink
               key={to}
@@ -65,26 +76,26 @@ export function AppLayout() {
               onClick={() => setSidebarOpen(false)}
               className={({ isActive }) =>
                 cn(
-                  'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
-                  isActive
-                    ? 'bg-indigo-50 text-indigo-600'
-                    : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+                  'group relative flex items-center gap-3 rounded-lg py-2.5 pl-3 pr-3 text-[13px] font-medium transition-[color,background-color,transform] duration-150 ease-out',
+                  isActive &&
+                    'bg-indigo-500/[0.09] text-indigo-700 shadow-[inset_0_0_0_1px_rgba(99,102,241,0.12)] before:absolute before:left-0 before:top-1/2 before:h-6 before:w-[3px] before:-translate-y-1/2 before:rounded-full before:bg-gradient-to-b before:from-indigo-500 before:to-violet-500 before:shadow-[0_0_12px_rgba(99,102,241,0.55)] before:content-[""]',
+                  !isActive && 'text-zinc-600 hover:bg-zinc-100/80 hover:text-zinc-900'
                 )
               }
             >
-              <Icon className="h-4 w-4 shrink-0" />
-              {label}
+              <Icon className="relative h-[15px] w-[15px] shrink-0 opacity-70 transition-[opacity,transform] duration-150 ease-out group-hover:scale-[1.03] group-hover:opacity-100 aria-[current=page]:opacity-100" />
+              <span className="relative truncate">{label}</span>
             </NavLink>
           ))}
         </nav>
 
-        <div className="p-4 border-t border-slate-200 space-y-3">
-          <div className="min-w-0">
-            <p className="text-xs font-medium text-slate-700 truncate" title={user?.email}>
+        <div className="space-y-3 border-t border-zinc-200/60 p-4">
+          <div className="min-w-0 rounded-lg bg-zinc-50/80 px-3 py-2 ring-1 ring-zinc-900/5">
+            <p className="truncate text-xs font-medium text-zinc-800" title={user?.email}>
               {user?.display_name || user?.email || 'Signed in'}
             </p>
             {user?.display_name ? (
-              <p className="text-xs text-slate-400 truncate" title={user.email}>
+              <p className="truncate text-[11px] text-zinc-500" title={user.email}>
                 {user.email}
               </p>
             ) : null}
@@ -92,31 +103,35 @@ export function AppLayout() {
           <Button
             variant="outline"
             size="sm"
-            className="w-full justify-start gap-2 text-slate-600"
+            className="w-full justify-start gap-2 border-zinc-200/90 text-zinc-600 hover:text-zinc-900"
             onClick={handleLogout}
           >
-            <LogOut className="h-4 w-4" />
+            <LogOut className="h-4 w-4 opacity-80" />
             Sign out
           </Button>
-          <p className="text-xs text-slate-400 text-center">Personal Finance Manager</p>
+          <p className="text-center text-[10px] font-medium uppercase tracking-wider text-zinc-400">
+            Personal workspace
+          </p>
         </div>
       </aside>
 
-      <div className="flex flex-1 flex-col min-w-0">
-        <header className="flex h-16 items-center gap-4 border-b border-slate-200 bg-white px-6 lg:hidden">
-          <Button variant="ghost" size="icon" onClick={() => setSidebarOpen(true)}>
+      <div className="flex min-w-0 flex-1 flex-col">
+        <header className="flex h-[3.65rem] shrink-0 items-center gap-3 border-b border-zinc-200/60 bg-white/55 px-4 backdrop-blur-md lg:hidden">
+          <Button variant="ghost" size="icon" className="shrink-0 text-zinc-600" onClick={() => setSidebarOpen(true)}>
             <Menu className="h-5 w-5" />
           </Button>
-          <div className="flex items-center gap-2">
-            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-indigo-600">
-              <Wallet className="h-4 w-4 text-white" />
+          <div className="flex min-w-0 items-center gap-2.5">
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-500 to-violet-600 text-white shadow-sm shadow-indigo-500/30">
+              <Wallet className="h-4 w-4" />
             </div>
-            <span className="font-bold text-slate-900">ExpenseManager</span>
+            <span className="truncate font-semibold tracking-tight text-zinc-900">ExpenseManager</span>
           </div>
         </header>
 
-        <main className="flex-1 overflow-y-auto p-6">
-          <Outlet />
+        <main className="min-h-0 flex-1 overflow-y-auto px-5 py-6 sm:px-6 sm:py-8 lg:px-8 lg:py-9">
+          <div className="mx-auto max-w-[1400px]">
+            <Outlet />
+          </div>
         </main>
       </div>
     </div>

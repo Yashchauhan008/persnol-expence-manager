@@ -16,7 +16,7 @@ export default defineConfig({
         short_name: 'Expenses',
         description: 'Track income, expenses, loans, and summaries.',
         theme_color: '#4f46e5',
-        background_color: '#f8fafc',
+        background_color: '#f4f4f5',
         display: 'standalone',
         orientation: 'portrait-primary',
         start_url: '/',

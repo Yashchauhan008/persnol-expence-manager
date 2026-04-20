@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, type ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { TrendingUp, TrendingDown, HandCoins, ArrowRight, Plus } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -6,16 +6,52 @@ import { Button } from '@/components/ui/button';
 import { AmountBadge } from '@/components/shared/AmountBadge';
 import { TagBadge } from '@/components/shared/TagBadge';
 import { LoanStatusBadge } from '@/components/shared/LoanStatusBadge';
+import { PageHeader } from '@/components/shared/PageHeader';
 import { useGetMonthlySummary } from '@/hooks/useSummary';
 import { useGetIncomes } from '@/hooks/useIncome';
 import { useGetExpenses } from '@/hooks/useExpenses';
 import { useGetLoans } from '@/hooks/useLoans';
-import { formatDate, getMonthIsoRange } from '@/lib/utils';
-import {
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend,
-} from 'recharts';
+import { cn, formatDate, getMonthIsoRange } from '@/lib/utils';
+import { IncomeExpenseBarChart } from '@/lib/chart';
 
-const MONTH_NAMES = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const MONTH_NAMES = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+function StatCard({
+  accent,
+  children,
+  className,
+}: {
+  accent: 'income' | 'expense' | 'neutral' | 'loan';
+  children: ReactNode;
+  className?: string;
+}) {
+  const accentRing =
+    accent === 'income'
+      ? 'from-teal-400/25 via-transparent to-transparent'
+      : accent === 'expense'
+        ? 'from-rose-400/20 via-transparent to-transparent'
+        : accent === 'loan'
+          ? 'from-amber-400/22 via-transparent to-transparent'
+          : 'from-indigo-400/15 via-transparent to-transparent';
+
+  return (
+    <Card
+      className={cn(
+        'group relative overflow-hidden border-zinc-200/60 transition-[transform,box-shadow] duration-200 ease-out hover:-translate-y-0.5 hover:shadow-lg hover:shadow-indigo-500/8',
+        className
+      )}
+    >
+      <div
+        className={cn(
+          'pointer-events-none absolute inset-0 bg-gradient-to-br opacity-100 transition-opacity duration-200 group-hover:opacity-100',
+          accentRing
+        )}
+      />
+      <div className="pointer-events-none absolute -right-8 -top-8 h-24 w-24 rounded-full bg-gradient-to-br from-white/80 to-transparent blur-2xl" />
+      {children}
+    </Card>
+  );
+}
 
 export default function Dashboard() {
   const now = new Date();
@@ -42,140 +78,132 @@ export default function Dashboard() {
   const net = summary?.net ?? 0;
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-slate-900">Dashboard</h1>
-          <p className="text-sm text-slate-500">
-            {MONTH_NAMES[month - 1]} {year} — summary, chart, and income/expense lists all use this
-            calendar month.
-          </p>
-        </div>
-        <div className="flex gap-2">
-          <Button asChild size="sm">
-            <Link to="/income/new"><Plus className="h-4 w-4" />Income</Link>
-          </Button>
-          <Button asChild size="sm" variant="outline">
-            <Link to="/expenses/new"><Plus className="h-4 w-4" />Expense</Link>
-          </Button>
-        </div>
-      </div>
+    <div className="space-y-8 sm:space-y-10">
+      <PageHeader
+        title="Dashboard"
+        description={`${MONTH_NAMES[month - 1]} ${year} — totals, chart, and recent activity use this calendar month.`}
+      >
+        <Button asChild size="sm">
+          <Link to="/income/new">
+            <Plus className="h-4 w-4" />
+            Income
+          </Link>
+        </Button>
+        <Button asChild size="sm" variant="outline">
+          <Link to="/expenses/new">
+            <Plus className="h-4 w-4" />
+            Expense
+          </Link>
+        </Button>
+      </PageHeader>
 
-      {/* Summary Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-slate-500 flex items-center gap-2">
-              <TrendingUp className="h-4 w-4 text-emerald-500" /> Total Income{' '}
-              <span className="font-normal text-slate-400">({MONTH_NAMES[month - 1]})</span>
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 xl:grid-cols-4">
+        <StatCard accent="income">
+          <CardHeader className="relative pb-2">
+            <CardTitle className="flex items-center gap-2 text-xs font-medium uppercase tracking-wide text-zinc-500">
+              <TrendingUp className="h-3.5 w-3.5 text-teal-500" /> Total income
+              <span className="font-normal normal-case tracking-normal text-zinc-400">({MONTH_NAMES[month - 1]})</span>
             </CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="relative">
             {summaryLoading ? (
-              <div className="h-7 w-32 bg-slate-100 rounded animate-pulse" />
+              <div className="h-8 w-36 animate-pulse rounded-md bg-zinc-100" />
             ) : (
-              <AmountBadge amount={summary?.total_income ?? 0} type="income" className="text-xl" />
+              <AmountBadge amount={summary?.total_income ?? 0} type="income" className="text-xl sm:text-2xl" />
             )}
           </CardContent>
-        </Card>
+        </StatCard>
 
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-slate-500 flex items-center gap-2">
-              <TrendingDown className="h-4 w-4 text-red-500" /> Total Expenses{' '}
-              <span className="font-normal text-slate-400">({MONTH_NAMES[month - 1]})</span>
+        <StatCard accent="expense">
+          <CardHeader className="relative pb-2">
+            <CardTitle className="flex flex-wrap items-center gap-2 text-xs font-medium uppercase tracking-wide text-zinc-500">
+              <TrendingDown className="h-3.5 w-3.5 text-rose-500" /> Total expenses
+              <span className="font-normal normal-case tracking-normal text-zinc-400">({MONTH_NAMES[month - 1]})</span>
             </CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="relative">
             {summaryLoading ? (
-              <div className="h-7 w-32 bg-slate-100 rounded animate-pulse" />
+              <div className="h-8 w-36 animate-pulse rounded-md bg-zinc-100" />
             ) : (
-              <AmountBadge amount={summary?.total_expense ?? 0} type="expense" className="text-xl" />
+              <AmountBadge amount={summary?.total_expense ?? 0} type="expense" className="text-xl sm:text-2xl" />
             )}
           </CardContent>
-        </Card>
+        </StatCard>
 
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-slate-500">Net Balance</CardTitle>
+        <StatCard accent="neutral">
+          <CardHeader className="relative pb-2">
+            <CardTitle className="text-xs font-medium uppercase tracking-wide text-zinc-500">Net balance</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="relative">
             {summaryLoading ? (
-              <div className="h-7 w-32 bg-slate-100 rounded animate-pulse" />
+              <div className="h-8 w-36 animate-pulse rounded-md bg-zinc-100" />
             ) : (
               <AmountBadge
                 amount={net}
                 type={net >= 0 ? 'income' : 'expense'}
-                className="text-xl"
+                className="text-xl sm:text-2xl"
               />
             )}
           </CardContent>
-        </Card>
+        </StatCard>
 
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-slate-500 flex items-center gap-2">
-              <HandCoins className="h-4 w-4 text-amber-500" /> New loans{' '}
-              <span className="font-normal text-slate-400">({MONTH_NAMES[month - 1]})</span>
+        <StatCard accent="loan">
+          <CardHeader className="relative pb-2">
+            <CardTitle className="flex flex-wrap items-center gap-2 text-xs font-medium uppercase tracking-wide text-zinc-500">
+              <HandCoins className="h-3.5 w-3.5 text-amber-500" /> New loans
+              <span className="font-normal normal-case tracking-normal text-zinc-400">({MONTH_NAMES[month - 1]})</span>
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-1">
-            <div className="flex justify-between text-sm">
-              <span className="text-slate-500">Given</span>
+          <CardContent className="relative space-y-2">
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-zinc-500">Given</span>
               <AmountBadge amount={summary?.total_loans_given ?? 0} type="income" />
             </div>
-            <div className="flex justify-between text-sm">
-              <span className="text-slate-500">Taken</span>
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-zinc-500">Taken</span>
               <AmountBadge amount={summary?.total_loans_taken ?? 0} type="expense" />
             </div>
           </CardContent>
-        </Card>
+        </StatCard>
       </div>
 
-      {/* Chart */}
       {chartData.length > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">Daily Income vs Expenses — {MONTH_NAMES[month - 1]}</CardTitle>
+        <Card className="overflow-hidden border-zinc-200/60">
+          <CardHeader className="border-b border-zinc-100/80 bg-gradient-to-r from-white to-zinc-50/50 pb-4">
+            <CardTitle className="text-base font-semibold tracking-tight text-zinc-900">
+              Daily income vs expenses — {MONTH_NAMES[month - 1]}
+            </CardTitle>
           </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={220}>
-              <BarChart data={chartData} margin={{ top: 5, right: 10, left: 0, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-                <XAxis dataKey="day" tick={{ fontSize: 11 }} />
-                <YAxis tick={{ fontSize: 11 }} />
-                <Tooltip
-                  formatter={(value) =>
-                    new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(Number(value))
-                  }
-                />
-                <Legend />
-                <Bar dataKey="Income" fill="#10b981" radius={[3, 3, 0, 0]} />
-                <Bar dataKey="Expenses" fill="#ef4444" radius={[3, 3, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
+          <CardContent className="pt-6">
+            <IncomeExpenseBarChart data={chartData} xKey="day" height={248} />
           </CardContent>
         </Card>
       )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Recent Income */}
-        <Card>
-          <CardHeader className="flex-row items-center justify-between space-y-0 pb-3">
-            <CardTitle className="text-base">Income — {MONTH_NAMES[month - 1]} {year}</CardTitle>
-            <Button asChild variant="ghost" size="sm">
-              <Link to="/income">View all <ArrowRight className="h-3 w-3" /></Link>
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 lg:gap-8">
+        <Card className="border-zinc-200/60">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 border-b border-zinc-100/80 pb-4">
+            <CardTitle className="text-base font-semibold tracking-tight">
+              Income — {MONTH_NAMES[month - 1]} {year}
+            </CardTitle>
+            <Button asChild variant="ghost" size="sm" className="h-8 gap-1 text-zinc-500 hover:text-indigo-600">
+              <Link to="/income">
+                View all <ArrowRight className="h-3.5 w-3.5 opacity-70" />
+              </Link>
             </Button>
           </CardHeader>
-          <CardContent className="space-y-2">
+          <CardContent className="space-y-0 pt-2">
             {incomeData?.data.length === 0 && (
-              <p className="text-sm text-slate-400 text-center py-4">No income recorded yet</p>
+              <p className="py-8 text-center text-sm text-zinc-400">No income recorded yet</p>
             )}
             {incomeData?.data.map(item => (
-              <div key={item.id} className="flex items-center justify-between py-1.5 border-b border-slate-50 last:border-0">
-                <div>
-                  <p className="text-sm font-medium text-slate-900">{item.source}</p>
-                  <p className="text-xs text-slate-400">{formatDate(item.date)}</p>
+              <div
+                key={item.id}
+                className="group flex items-center justify-between gap-3 rounded-lg py-2.5 pl-2 pr-2 transition-colors duration-150 hover:bg-zinc-50"
+              >
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-medium text-zinc-900">{item.source}</p>
+                  <p className="text-xs text-zinc-400">{formatDate(item.date)}</p>
                 </div>
                 <AmountBadge amount={item.amount} type="income" />
               </div>
@@ -183,56 +211,67 @@ export default function Dashboard() {
           </CardContent>
         </Card>
 
-        {/* Recent Expenses */}
-        <Card>
-          <CardHeader className="flex-row items-center justify-between space-y-0 pb-3">
-            <CardTitle className="text-base">Expenses — {MONTH_NAMES[month - 1]} {year}</CardTitle>
-            <Button asChild variant="ghost" size="sm">
-              <Link to="/expenses">View all <ArrowRight className="h-3 w-3" /></Link>
+        <Card className="border-zinc-200/60">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 border-b border-zinc-100/80 pb-4">
+            <CardTitle className="text-base font-semibold tracking-tight">
+              Expenses — {MONTH_NAMES[month - 1]} {year}
+            </CardTitle>
+            <Button asChild variant="ghost" size="sm" className="h-8 gap-1 text-zinc-500 hover:text-indigo-600">
+              <Link to="/expenses">
+                View all <ArrowRight className="h-3.5 w-3.5 opacity-70" />
+              </Link>
             </Button>
           </CardHeader>
-          <CardContent className="space-y-2">
+          <CardContent className="space-y-0 pt-2">
             {expenseData?.data.length === 0 && (
-              <p className="text-sm text-slate-400 text-center py-4">No expenses recorded yet</p>
+              <p className="py-8 text-center text-sm text-zinc-400">No expenses recorded yet</p>
             )}
             {expenseData?.data.map(item => (
-              <div key={item.id} className="flex items-center justify-between py-1.5 border-b border-slate-50 last:border-0">
+              <div
+                key={item.id}
+                className="group flex items-center justify-between gap-3 rounded-lg py-2.5 pl-2 pr-2 transition-colors duration-150 hover:bg-zinc-50"
+              >
                 <div className="min-w-0 flex-1">
-                  <p className="text-sm font-medium text-slate-900 truncate">{item.title}</p>
-                  <div className="flex items-center gap-1 flex-wrap mt-0.5">
-                    <span className="text-xs text-slate-400">{formatDate(item.date)}</span>
-                    {item.tags.slice(0, 2).map(tag => <TagBadge key={tag.id} tag={tag} />)}
+                  <p className="truncate text-sm font-medium text-zinc-900">{item.title}</p>
+                  <div className="mt-0.5 flex flex-wrap items-center gap-1">
+                    <span className="text-xs text-zinc-400">{formatDate(item.date)}</span>
+                    {item.tags.slice(0, 2).map(tag => (
+                      <TagBadge key={tag.id} tag={tag} />
+                    ))}
                   </div>
                 </div>
-                <AmountBadge amount={item.amount} type="expense" className="ml-3" />
+                <AmountBadge amount={item.amount} type="expense" className="ml-1 shrink-0" />
               </div>
             ))}
           </CardContent>
         </Card>
 
-        {/* Active Loans Given */}
-        <Card>
-          <CardHeader className="flex-row items-center justify-between space-y-0 pb-3">
-            <CardTitle className="text-base text-emerald-700">Loans Given (Active)</CardTitle>
-            <Button asChild variant="ghost" size="sm">
-              <Link to="/loans/given">View all <ArrowRight className="h-3 w-3" /></Link>
+        <Card className="border-teal-200/50 bg-gradient-to-b from-teal-50/40 to-transparent">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 border-b border-teal-100/60 pb-4">
+            <CardTitle className="text-base font-semibold tracking-tight text-teal-900">Loans given (active)</CardTitle>
+            <Button asChild variant="ghost" size="sm" className="h-8 gap-1 text-zinc-500 hover:text-indigo-600">
+              <Link to="/loans/given">
+                View all <ArrowRight className="h-3.5 w-3.5 opacity-70" />
+              </Link>
             </Button>
           </CardHeader>
-          <CardContent className="space-y-2">
-            <p className="text-xs text-slate-400 -mt-1 mb-2">
-              Open loans (any month). The summary card above counts only loans created in{' '}
-              {MONTH_NAMES[month - 1]}.
+          <CardContent className="space-y-0 pt-2">
+            <p className="-mt-1 mb-3 text-xs leading-relaxed text-zinc-500">
+              Open loans (any month). The summary card counts only loans created in {MONTH_NAMES[month - 1]}.
             </p>
             {loanGivenData?.data.length === 0 && (
-              <p className="text-sm text-slate-400 text-center py-4">No active loans given</p>
+              <p className="py-8 text-center text-sm text-zinc-400">No active loans given</p>
             )}
             {loanGivenData?.data.map(loan => (
-              <div key={loan.id} className="flex items-center justify-between py-1.5 border-b border-slate-50 last:border-0">
-                <div>
-                  <p className="text-sm font-medium text-slate-900">{loan.person_name}</p>
-                  <p className="text-xs text-slate-400">{formatDate(loan.date)}</p>
+              <div
+                key={loan.id}
+                className="group flex items-center justify-between gap-3 rounded-lg py-2.5 pl-2 pr-2 transition-colors duration-150 hover:bg-white/60"
+              >
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-medium text-zinc-900">{loan.person_name}</p>
+                  <p className="text-xs text-zinc-400">{formatDate(loan.date)}</p>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex shrink-0 items-center gap-2">
                   <LoanStatusBadge status={loan.status} />
                   <AmountBadge amount={loan.remaining_amount} type="income" />
                 </div>
@@ -241,29 +280,32 @@ export default function Dashboard() {
           </CardContent>
         </Card>
 
-        {/* Active Loans Taken */}
-        <Card>
-          <CardHeader className="flex-row items-center justify-between space-y-0 pb-3">
-            <CardTitle className="text-base text-red-700">Loans Taken (Active)</CardTitle>
-            <Button asChild variant="ghost" size="sm">
-              <Link to="/loans/taken">View all <ArrowRight className="h-3 w-3" /></Link>
+        <Card className="border-rose-200/50 bg-gradient-to-b from-rose-50/35 to-transparent">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 border-b border-rose-100/60 pb-4">
+            <CardTitle className="text-base font-semibold tracking-tight text-rose-900">Loans taken (active)</CardTitle>
+            <Button asChild variant="ghost" size="sm" className="h-8 gap-1 text-zinc-500 hover:text-indigo-600">
+              <Link to="/loans/taken">
+                View all <ArrowRight className="h-3.5 w-3.5 opacity-70" />
+              </Link>
             </Button>
           </CardHeader>
-          <CardContent className="space-y-2">
-            <p className="text-xs text-slate-400 -mt-1 mb-2">
-              Open loans (any month). The summary card above counts only loans created in{' '}
-              {MONTH_NAMES[month - 1]}.
+          <CardContent className="space-y-0 pt-2">
+            <p className="-mt-1 mb-3 text-xs leading-relaxed text-zinc-500">
+              Open loans (any month). The summary card counts only loans created in {MONTH_NAMES[month - 1]}.
             </p>
             {loanTakenData?.data.length === 0 && (
-              <p className="text-sm text-slate-400 text-center py-4">No active loans taken</p>
+              <p className="py-8 text-center text-sm text-zinc-400">No active loans taken</p>
             )}
             {loanTakenData?.data.map(loan => (
-              <div key={loan.id} className="flex items-center justify-between py-1.5 border-b border-slate-50 last:border-0">
-                <div>
-                  <p className="text-sm font-medium text-slate-900">{loan.person_name}</p>
-                  <p className="text-xs text-slate-400">{formatDate(loan.date)}</p>
+              <div
+                key={loan.id}
+                className="group flex items-center justify-between gap-3 rounded-lg py-2.5 pl-2 pr-2 transition-colors duration-150 hover:bg-white/60"
+              >
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-medium text-zinc-900">{loan.person_name}</p>
+                  <p className="text-xs text-zinc-400">{formatDate(loan.date)}</p>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex shrink-0 items-center gap-2">
                   <LoanStatusBadge status={loan.status} />
                   <AmountBadge amount={loan.remaining_amount} type="expense" />
                 </div>

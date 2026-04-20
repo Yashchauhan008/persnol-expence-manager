@@ -10,10 +10,10 @@ export function AmountBadge({ amount, type = 'neutral', className }: AmountBadge
   return (
     <span
       className={cn(
-        'font-semibold tabular-nums',
-        type === 'income' && 'text-emerald-600',
-        type === 'expense' && 'text-red-500',
-        type === 'neutral' && 'text-slate-900',
+        'font-semibold tabular-nums tracking-tight',
+        type === 'income' && 'text-teal-600',
+        type === 'expense' && 'text-rose-600',
+        type === 'neutral' && 'text-zinc-900',
         className
       )}
     >

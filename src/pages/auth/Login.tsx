@@ -98,50 +98,48 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col lg:flex-row bg-slate-100">
-      {/* Brand panel — enterprise / ERP style */}
-      <div className="relative flex flex-col justify-between bg-linear-to-br from-slate-900 via-slate-800 to-indigo-950 text-white px-8 py-10 lg:w-[46%] lg:min-h-screen lg:px-12 lg:py-14">
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20width=%2240%22%20height=%2240%22%20viewBox=%220%200%2040%2040%22%3E%3Cg%20fill=%22none%22%20fill-opacity=%220.06%22%3E%3Cpath%20d=%22M0%2040h40V0H0z%22%20fill=%22%23fff%22/%3E%3C/g%3E%3C/svg%3E')] opacity-90 pointer-events-none" />
+    <div className="flex min-h-screen flex-col bg-zinc-100 lg:flex-row">
+      <div className="relative flex flex-col justify-between bg-gradient-to-br from-zinc-950 via-zinc-900 to-indigo-950 px-8 py-10 text-white lg:w-[46%] lg:min-h-screen lg:px-12 lg:py-14">
+        <div className="pointer-events-none absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20width=%2240%22%20height=%2240%22%20viewBox=%220%200%2040%2040%22%3E%3Cg%20fill=%22none%22%20fill-opacity=%220.06%22%3E%3Cpath%20d=%22M0%2040h40V0H0z%22%20fill=%22%23fff%22/%3E%3C/g%3E%3C/svg%3E')] opacity-90" />
+        <div className="pointer-events-none absolute -right-24 top-1/4 h-72 w-72 rounded-full bg-indigo-500/25 blur-3xl" />
+        <div className="pointer-events-none absolute bottom-0 left-1/3 h-48 w-48 rounded-full bg-violet-600/20 blur-3xl" />
         <div className="relative z-10 space-y-6">
           <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-white/10 ring-1 ring-white/20 backdrop-blur">
+            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-white/10 shadow-lg shadow-black/20 ring-1 ring-white/20 backdrop-blur-md transition-transform duration-200 hover:scale-[1.02]">
               <Building2 className="h-6 w-6 text-indigo-200" />
             </div>
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-indigo-200/90">
-                ProERP Suite
+              <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-indigo-200/95">
+                ExpenseManager
               </p>
-              <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">Expense Manager</h1>
+              <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">Personal finance</h1>
             </div>
           </div>
-          <p className="max-w-md text-sm leading-relaxed text-slate-300">
-            Secure workspace sign-in. Your income, expenses, and loans are visible only to your
-            organization account.
+          <p className="max-w-md text-sm leading-relaxed text-zinc-300">
+            Secure Google sign-in. Your income, expenses, and loans stay in this workspace only.
           </p>
-          <ul className="space-y-3 text-sm text-slate-300">
+          <ul className="space-y-3 text-sm text-zinc-300">
             <li className="flex items-start gap-2">
-              <ShieldCheck className="h-5 w-5 shrink-0 text-emerald-400 mt-0.5" />
-              <span>Google-verified identity; no passwords stored in this app.</span>
+              <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-teal-400" />
+              <span>Google-verified identity — this app does not store passwords.</span>
             </li>
             <li className="flex items-start gap-2">
-              <ShieldCheck className="h-5 w-5 shrink-0 text-emerald-400 mt-0.5" />
-              <span>Role-ready layout aligned with enterprise ERP portals.</span>
+              <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-teal-400" />
+              <span>Fast, focused UI for daily tracking and month-end clarity.</span>
             </li>
           </ul>
         </div>
-        <p className="relative z-10 text-xs text-slate-500">
-          © {new Date().getFullYear()} Expense Manager · Authorized access only
+        <p className="relative z-10 text-xs text-zinc-500">
+          © {new Date().getFullYear()} ExpenseManager · Authorized access only
         </p>
       </div>
 
-      {/* Sign-in panel */}
       <div className="flex flex-1 flex-col items-center justify-center px-6 py-12 lg:py-16">
-        <div className="w-full max-w-md rounded-2xl border border-slate-200/80 bg-white p-8 shadow-xl shadow-slate-200/50">
+        <div className="w-full max-w-md rounded-2xl border border-zinc-200/80 bg-white/90 p-8 shadow-[0_24px_64px_-24px_rgba(15,23,42,0.18)] backdrop-blur-md transition-shadow duration-200 hover:shadow-[0_28px_72px_-24px_rgba(99,102,241,0.12)]">
           <div className="mb-8 space-y-2 text-center lg:text-left">
-            <h2 className="text-xl font-semibold text-slate-900">Welcome</h2>
-            <p className="text-sm text-slate-600">
-              Sign in with your Google account to open the application. No other sign-in method is
-              available.
+            <h2 className="text-xl font-semibold tracking-tight text-zinc-900">Welcome back</h2>
+            <p className="text-sm leading-relaxed text-zinc-600">
+              Sign in with Google to continue. This is the only sign-in method for this app.
             </p>
           </div>
 
@@ -156,7 +154,7 @@ export default function Login() {
             {busy && <p className="text-xs text-slate-500">Completing sign-in…</p>}
           </div>
 
-          <p className="mt-8 text-center text-[11px] leading-relaxed text-slate-400">
+          <p className="mt-8 text-center text-[11px] leading-relaxed text-zinc-400">
             By continuing, you agree that your name and email from Google may be stored to provide
             access to this application.
           </p>

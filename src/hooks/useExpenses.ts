@@ -9,6 +9,7 @@ import type {
 import type { PaginatedResponse } from '@/types/income';
 import { useAuth } from '@/context/AuthContext';
 import { summaryKeys } from '@/hooks/useSummary';
+import { tagKeys } from '@/hooks/useTags';
 
 export const expenseKeys = {
   all: ['expenses'] as const,
@@ -46,6 +47,7 @@ export function useCreateExpense() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: expenseKeys.all });
       queryClient.invalidateQueries({ queryKey: summaryKeys.all });
+      queryClient.invalidateQueries({ queryKey: tagKeys.all });
       toast.success('Expense added');
     },
   });
@@ -58,6 +60,7 @@ export function useUpdateExpense() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: expenseKeys.all });
       queryClient.invalidateQueries({ queryKey: summaryKeys.all });
+      queryClient.invalidateQueries({ queryKey: tagKeys.all });
       toast.success('Expense updated');
     },
   });
@@ -70,6 +73,7 @@ export function useDeleteExpense() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: expenseKeys.all });
       queryClient.invalidateQueries({ queryKey: summaryKeys.all });
+      queryClient.invalidateQueries({ queryKey: tagKeys.all });
       toast.success('Expense deleted');
     },
   });

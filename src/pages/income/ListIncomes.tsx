@@ -3,10 +3,12 @@ import { Link } from 'react-router-dom';
 import { Plus, Pencil, Trash2 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { DateRangeFilter } from '@/components/shared/DateRangeFilter';
 import { AmountBadge } from '@/components/shared/AmountBadge';
 import { Badge } from '@/components/ui/badge';
 import { ConfirmDialog } from '@/components/shared/ConfirmDialog';
+import { PageHeader } from '@/components/shared/PageHeader';
+import { ListMetricsStrip } from '@/components/shared/ListMetricsStrip';
 import { useGetIncomes, useDeleteIncome } from '@/hooks/useIncome';
 import { formatDate } from '@/lib/utils';
 
@@ -25,71 +27,58 @@ export default function ListIncomes() {
   };
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-slate-900">Income</h1>
+    <div className="space-y-6 sm:space-y-8">
+      <PageHeader title="Income" description="Track sources and amounts. Loan recoveries appear with a recovery badge.">
         <Button asChild size="sm">
-          <Link to="/income/new"><Plus className="h-4 w-4" />Add Income</Link>
+          <Link to="/income/new">
+            <Plus className="h-4 w-4" />
+            Add income
+          </Link>
         </Button>
-      </div>
+      </PageHeader>
 
-      {/* Filters */}
-      <Card>
-        <CardContent className="pt-4">
-          <div className="flex flex-wrap gap-3">
-            <div className="flex items-center gap-2">
-              <label className="text-sm text-slate-500">From</label>
-              <Input type="date" value={from} onChange={e => { setFrom(e.target.value); setPage(1); }} className="w-36" />
-            </div>
-            <div className="flex items-center gap-2">
-              <label className="text-sm text-slate-500">To</label>
-              <Input type="date" value={to} onChange={e => { setTo(e.target.value); setPage(1); }} className="w-36" />
-            </div>
-            {(from || to) && (
-              <Button variant="ghost" size="sm" onClick={() => { setFrom(''); setTo(''); setPage(1); }}>
-                Clear
-              </Button>
-            )}
-          </div>
-        </CardContent>
-      </Card>
+      <DateRangeFilter
+        from={from}
+        to={to}
+        onFromChange={v => { setFrom(v); setPage(1); }}
+        onToChange={v => { setTo(v); setPage(1); }}
+        onClearDates={() => { setFrom(''); setTo(''); setPage(1); }}
+      />
 
       {!isLoading && data && (
-        <Card>
-          <CardContent className="pt-4 flex flex-wrap gap-6 text-sm">
-            <div>
-              <span className="text-slate-500">Total (this list)</span>
-              <div className="mt-0.5">
-                <AmountBadge amount={data?.meta.sum_visible_amount ?? 0} type="income" className="text-base" />
-              </div>
-            </div>
-            <div>
-              <span className="text-slate-500">Total in date range</span>
-              <p className="text-xs text-slate-400 mt-0.5">Incomes + loan recoveries</p>
-              <div className="mt-0.5">
-                <AmountBadge amount={data?.meta.sum_period_amount ?? 0} type="income" className="text-base" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        <ListMetricsStrip
+          items={[
+            {
+              label: 'Total (this list)',
+              amount: data.meta.sum_visible_amount ?? 0,
+              amountType: 'income',
+            },
+            {
+              label: 'Total in date range',
+              hint: 'Incomes + loan recoveries',
+              amount: data.meta.sum_period_amount ?? 0,
+              amountType: 'income',
+            },
+          ]}
+        />
       )}
 
-      <Card>
-        <CardHeader className="pb-2">
-          <CardTitle className="text-base">
+      <Card className="border-zinc-200/60">
+        <CardHeader className="border-b border-zinc-100/80 pb-3">
+          <CardTitle className="text-sm font-semibold tracking-tight text-zinc-800">
             {data?.meta.total ?? 0} records
           </CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="pt-4">
           {isLoading ? (
             <div className="space-y-3">
               {[...Array(5)].map((_, i) => (
-                <div key={i} className="h-12 bg-slate-100 rounded animate-pulse" />
+                <div key={i} className="h-12 animate-pulse rounded-lg bg-zinc-100/90" />
               ))}
             </div>
           ) : data?.data.length === 0 ? (
-            <div className="text-center py-12">
-              <p className="text-slate-400 mb-3">No income records found</p>
+            <div className="py-14 text-center">
+              <p className="mb-4 text-sm text-zinc-400">No income records found</p>
               <Button asChild size="sm">
                 <Link to="/income/new">Add your first income</Link>
               </Button>
@@ -98,47 +87,47 @@ export default function ListIncomes() {
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-slate-100">
-                    <th className="text-left py-2 px-2 font-medium text-slate-500">Date</th>
-                    <th className="text-left py-2 px-2 font-medium text-slate-500">Source</th>
-                    <th className="text-left py-2 px-2 font-medium text-slate-500">Note</th>
-                    <th className="text-right py-2 px-2 font-medium text-slate-500">Amount</th>
-                    <th className="text-right py-2 px-2 font-medium text-slate-500">Actions</th>
+                  <tr className="border-b border-zinc-200/80">
+                    <th className="px-3 py-2.5 text-left text-[11px] font-semibold uppercase tracking-wide text-zinc-500">Date</th>
+                    <th className="px-3 py-2.5 text-left text-[11px] font-semibold uppercase tracking-wide text-zinc-500">Source</th>
+                    <th className="px-3 py-2.5 text-left text-[11px] font-semibold uppercase tracking-wide text-zinc-500">Note</th>
+                    <th className="px-3 py-2.5 text-right text-[11px] font-semibold uppercase tracking-wide text-zinc-500">Amount</th>
+                    <th className="px-3 py-2.5 text-right text-[11px] font-semibold uppercase tracking-wide text-zinc-500">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {data?.data.map(item => {
                     const isRecovery = item.entry_kind === 'loan_recovery';
                     return (
-                    <tr key={item.id} className="border-b border-slate-50 hover:bg-slate-50 transition-colors">
-                      <td className="py-3 px-2 text-slate-500 whitespace-nowrap">{formatDate(item.date)}</td>
-                      <td className="py-3 px-2 font-medium text-slate-900">
+                    <tr key={item.id} className="border-b border-zinc-100/90 transition-colors duration-150 hover:bg-zinc-50/80">
+                      <td className="whitespace-nowrap px-3 py-3 text-zinc-500">{formatDate(item.date)}</td>
+                      <td className="px-3 py-3 font-medium text-zinc-900">
                         <span className="align-middle">{item.source}</span>
                         {isRecovery && (
                           <Badge variant="success" className="ml-2 align-middle text-[10px] px-1.5 py-0">Recovery</Badge>
                         )}
                       </td>
-                      <td className="py-3 px-2 text-slate-400 max-w-xs truncate">{item.note ?? '—'}</td>
-                      <td className="py-3 px-2 text-right">
+                      <td className="max-w-xs truncate px-3 py-3 text-zinc-400">{item.note ?? '—'}</td>
+                      <td className="px-3 py-3 text-right">
                         <AmountBadge amount={Number(item.amount)} type="income" />
                       </td>
-                      <td className="py-3 px-2 text-right">
+                      <td className="px-3 py-3 text-right">
                         {!isRecovery ? (
-                          <div className="flex items-center justify-end gap-1">
-                            <Button asChild variant="ghost" size="icon">
+                          <div className="flex items-center justify-end gap-0.5">
+                            <Button asChild variant="ghost" size="icon" className="h-8 w-8 text-zinc-500 hover:text-indigo-600">
                               <Link to={`/income/${item.id}/edit`}><Pencil className="h-3.5 w-3.5" /></Link>
                             </Button>
                             <Button
                               variant="ghost"
                               size="icon"
-                              className="text-red-500 hover:text-red-600"
+                              className="h-8 w-8 text-rose-500 hover:bg-rose-50 hover:text-rose-600"
                               onClick={() => setDeleteId(item.id)}
                             >
                               <Trash2 className="h-3.5 w-3.5" />
                             </Button>
                           </div>
                         ) : (
-                          <span className="text-xs text-slate-400">From loan</span>
+                          <span className="text-xs text-zinc-400">From loan</span>
                         )}
                       </td>
                     </tr>
@@ -151,8 +140,8 @@ export default function ListIncomes() {
 
           {/* Pagination */}
           {data && data.meta.total_pages > 1 && (
-            <div className="flex items-center justify-between mt-4 pt-4 border-t border-slate-100">
-              <p className="text-sm text-slate-500">
+            <div className="mt-5 flex items-center justify-between border-t border-zinc-100/90 pt-5">
+              <p className="text-sm text-zinc-500">
                 Page {data.meta.page} of {data.meta.total_pages}
               </p>
               <div className="flex gap-2">
