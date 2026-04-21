@@ -4,7 +4,7 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 
 const buttonVariants = cva(
-  'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-medium transition-[color,background-color,border-color,box-shadow,transform] duration-150 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/80 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-50 active:scale-[0.98] disabled:pointer-events-none disabled:opacity-50 disabled:active:scale-100',
+  'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-medium transition-[color,background-color,border-color,box-shadow,transform] duration-150 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/80 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-50 dark:focus-visible:ring-offset-zinc-950 active:scale-[0.98] disabled:pointer-events-none disabled:opacity-50 disabled:active:scale-100',
   {
     variants: {
       variant: {
@@ -13,10 +13,10 @@ const buttonVariants = cva(
         destructive:
           'bg-rose-600 text-white shadow-sm shadow-rose-600/20 hover:bg-rose-500 hover:shadow-md hover:shadow-rose-500/25',
         outline:
-          'border border-slate-200/90 bg-white/90 text-slate-800 shadow-sm hover:border-slate-300 hover:bg-white hover:shadow-md hover:shadow-slate-900/5',
+          'border border-slate-200/90 bg-white/90 text-slate-800 shadow-sm hover:border-slate-300 hover:bg-white hover:shadow-md hover:shadow-slate-900/5 dark:border-zinc-700/70 dark:bg-zinc-900/70 dark:text-zinc-100 dark:hover:border-zinc-600 dark:hover:bg-zinc-900',
         secondary:
-          'bg-zinc-100/90 text-zinc-900 hover:bg-zinc-200/90 hover:shadow-sm',
-        ghost: 'text-zinc-700 hover:bg-zinc-100/80 hover:text-zinc-900',
+          'bg-zinc-100/90 text-zinc-900 hover:bg-zinc-200/90 hover:shadow-sm dark:bg-zinc-800/80 dark:text-zinc-100 dark:hover:bg-zinc-700/80',
+        ghost: 'text-zinc-700 hover:bg-zinc-100/80 hover:text-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800/80 dark:hover:text-zinc-100',
         link: 'text-indigo-600 underline-offset-4 hover:text-indigo-500 hover:underline active:scale-100',
       },
       size: {

@@ -11,7 +11,7 @@ const TabsList = React.forwardRef<
   <TabsPrimitive.List
     ref={ref}
     className={cn(
-      'inline-flex h-9 items-center justify-center rounded-lg border border-zinc-200/60 bg-zinc-100/80 p-0.5 text-zinc-500 shadow-inner shadow-zinc-900/5',
+      'inline-flex h-9 items-center justify-center rounded-lg border border-zinc-200/60 bg-zinc-100/80 p-0.5 text-zinc-500 shadow-inner shadow-zinc-900/5 dark:border-zinc-700/70 dark:bg-zinc-800/80 dark:text-zinc-300 dark:shadow-black/20',
       className
     )}
     {...props}
@@ -26,7 +26,7 @@ const TabsTrigger = React.forwardRef<
   <TabsPrimitive.Trigger
     ref={ref}
     className={cn(
-      'inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1 text-sm font-medium transition-[color,background-color,box-shadow,transform] duration-150 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-50 disabled:pointer-events-none disabled:opacity-50 hover:bg-white/55 hover:text-zinc-800 data-[state=active]:bg-white data-[state=active]:text-indigo-600 data-[state=active]:shadow-sm data-[state=active]:shadow-indigo-500/10 data-[state=active]:hover:bg-white',
+      'inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1 text-sm font-medium transition-[color,background-color,box-shadow,transform] duration-150 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-50 disabled:pointer-events-none disabled:opacity-50 hover:bg-white/55 hover:text-zinc-800 data-[state=active]:bg-white data-[state=active]:text-indigo-600 data-[state=active]:shadow-sm data-[state=active]:shadow-indigo-500/10 data-[state=active]:hover:bg-white dark:focus-visible:ring-offset-zinc-950 dark:hover:bg-zinc-700/70 dark:hover:text-zinc-100 dark:data-[state=active]:bg-zinc-900 dark:data-[state=active]:text-indigo-200 dark:data-[state=active]:hover:bg-zinc-900',
       className
     )}
     {...props}

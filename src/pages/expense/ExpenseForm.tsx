@@ -9,7 +9,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { PageBackButton } from '@/components/shared/PageBackButton';
 import { useCreateExpense, useGetExpense, useUpdateExpense } from '@/hooks/useExpenses';
 import { useGetTags } from '@/hooks/useTags';
-import { todayISO, toInputDate } from '@/lib/utils';
+import { getReadableTextColor, todayISO, toInputDate } from '@/lib/utils';
 import type { Tag } from '@/types/tag';
 
 export default function ExpenseForm() {
@@ -127,8 +127,8 @@ export default function ExpenseForm() {
                       key={tag.id}
                       type="button"
                       onClick={() => toggleTag(tag)}
-                      className="flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium text-white"
-                      style={{ backgroundColor: tag.color }}
+                      className="flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold"
+                      style={{ backgroundColor: tag.color, color: getReadableTextColor(tag.color) }}
                     >
                       {tag.name}
                       <X className="h-3 w-3" />
@@ -152,7 +152,7 @@ export default function ExpenseForm() {
                   ))}
               </div>
               {allTags.length === 0 && (
-                <p className="text-xs text-slate-400">
+                <p className="text-xs text-slate-400 dark:text-zinc-300">
                   No tags yet. <a href="/tags" className="text-indigo-500 hover:underline">Create some tags</a> first.
                 </p>
               )}

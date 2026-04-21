@@ -23,6 +23,25 @@ export function hexToRgba(hex: string, alpha: number): string {
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 }
 
+/** Pick readable foreground for a hex background (falls back to dark text). */
+export function getReadableTextColor(hex: string): '#ffffff' | '#111827' {
+  let h = hex.trim().replace(/^#/, '');
+  if (h.length === 3) {
+    h = h
+      .split('')
+      .map(c => c + c)
+      .join('');
+  }
+  if (!/^[0-9a-fA-F]{6}$/.test(h)) {
+    return '#111827';
+  }
+  const r = parseInt(h.slice(0, 2), 16);
+  const g = parseInt(h.slice(2, 4), 16);
+  const b = parseInt(h.slice(4, 6), 16);
+  const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+  return luminance > 0.62 ? '#111827' : '#ffffff';
+}
+
 export function formatCurrency(amount: number): string {
   return new Intl.NumberFormat('en-IN', {
     style: 'currency',

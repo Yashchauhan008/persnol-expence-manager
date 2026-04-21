@@ -21,12 +21,12 @@ export function ListMetricsStrip({ items, className }: ListMetricsStripProps) {
     items.length >= 3 ? 'sm:grid-cols-3' : items.length === 2 ? 'sm:grid-cols-2' : 'sm:grid-cols-1';
 
   return (
-    <Card className={cn('overflow-hidden border-zinc-200/60', className)}>
+    <Card className={cn('overflow-hidden border-zinc-200/60 dark:border-zinc-700/70', className)}>
       <CardContent className="p-0">
         <div
           role="list"
           className={cn(
-            'grid grid-cols-1 divide-y divide-zinc-200/70 sm:auto-rows-fr sm:divide-x sm:divide-y-0',
+            'grid grid-cols-1 divide-y divide-zinc-200/70 dark:divide-zinc-700/70 sm:auto-rows-fr sm:divide-x sm:divide-y-0',
             colClass
           )}
         >
@@ -36,12 +36,12 @@ export function ListMetricsStrip({ items, className }: ListMetricsStripProps) {
               role="listitem"
               className="grid grid-rows-[auto_minmax(2.25rem,auto)_auto] justify-items-center gap-0 px-4 py-5 text-center sm:px-6 sm:py-6"
             >
-              <p className="max-w-[16rem] text-[11px] font-medium uppercase leading-snug tracking-[0.06em] text-zinc-500">
+              <p className="max-w-[16rem] text-[11px] font-medium uppercase leading-snug tracking-[0.06em] text-zinc-500 dark:text-zinc-400">
                 {item.label}
               </p>
               <div className="flex w-full max-w-[18rem] items-start justify-center pt-1">
                 {item.hint ? (
-                  <p className="text-center text-[11px] leading-snug text-zinc-400">{item.hint}</p>
+                  <p className="text-center text-[11px] leading-snug text-zinc-400 dark:text-zinc-500">{item.hint}</p>
                 ) : (
                   <div className="min-h-[2.25rem] w-full max-w-[14rem]" aria-hidden />
                 )}

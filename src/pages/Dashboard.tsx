@@ -47,7 +47,7 @@ function StatCard({
           accentRing
         )}
       />
-      <div className="pointer-events-none absolute -right-8 -top-8 h-24 w-24 rounded-full bg-gradient-to-br from-white/80 to-transparent blur-2xl" />
+      <div className="pointer-events-none absolute -right-8 -top-8 h-24 w-24 rounded-full bg-gradient-to-br from-white/80 to-transparent blur-2xl dark:from-zinc-100/10" />
       {children}
     </Card>
   );
@@ -102,12 +102,12 @@ export default function Dashboard() {
           <CardHeader className="relative pb-2">
             <CardTitle className="flex items-center gap-2 text-xs font-medium uppercase tracking-wide text-zinc-500">
               <TrendingUp className="h-3.5 w-3.5 text-teal-500" /> Total income
-              <span className="font-normal normal-case tracking-normal text-zinc-400">({MONTH_NAMES[month - 1]})</span>
+              <span className="font-normal normal-case tracking-normal text-zinc-400 dark:text-zinc-300">({MONTH_NAMES[month - 1]})</span>
             </CardTitle>
           </CardHeader>
           <CardContent className="relative">
             {summaryLoading ? (
-              <div className="h-8 w-36 animate-pulse rounded-md bg-zinc-100" />
+              <div className="h-8 w-36 animate-pulse rounded-md bg-zinc-100 dark:bg-zinc-800/65" />
             ) : (
               <AmountBadge amount={summary?.total_income ?? 0} type="income" className="text-xl sm:text-2xl" />
             )}
@@ -118,12 +118,12 @@ export default function Dashboard() {
           <CardHeader className="relative pb-2">
             <CardTitle className="flex flex-wrap items-center gap-2 text-xs font-medium uppercase tracking-wide text-zinc-500">
               <TrendingDown className="h-3.5 w-3.5 text-rose-500" /> Total expenses
-              <span className="font-normal normal-case tracking-normal text-zinc-400">({MONTH_NAMES[month - 1]})</span>
+              <span className="font-normal normal-case tracking-normal text-zinc-400 dark:text-zinc-300">({MONTH_NAMES[month - 1]})</span>
             </CardTitle>
           </CardHeader>
           <CardContent className="relative">
             {summaryLoading ? (
-              <div className="h-8 w-36 animate-pulse rounded-md bg-zinc-100" />
+              <div className="h-8 w-36 animate-pulse rounded-md bg-zinc-100 dark:bg-zinc-800/65" />
             ) : (
               <AmountBadge amount={summary?.total_expense ?? 0} type="expense" className="text-xl sm:text-2xl" />
             )}
@@ -136,7 +136,7 @@ export default function Dashboard() {
           </CardHeader>
           <CardContent className="relative">
             {summaryLoading ? (
-              <div className="h-8 w-36 animate-pulse rounded-md bg-zinc-100" />
+              <div className="h-8 w-36 animate-pulse rounded-md bg-zinc-100 dark:bg-zinc-800/65" />
             ) : (
               <AmountBadge
                 amount={net}
@@ -151,7 +151,7 @@ export default function Dashboard() {
           <CardHeader className="relative pb-2">
             <CardTitle className="flex flex-wrap items-center gap-2 text-xs font-medium uppercase tracking-wide text-zinc-500">
               <HandCoins className="h-3.5 w-3.5 text-amber-500" /> New loans
-              <span className="font-normal normal-case tracking-normal text-zinc-400">({MONTH_NAMES[month - 1]})</span>
+              <span className="font-normal normal-case tracking-normal text-zinc-400 dark:text-zinc-300">({MONTH_NAMES[month - 1]})</span>
             </CardTitle>
           </CardHeader>
           <CardContent className="relative space-y-2">
@@ -169,8 +169,8 @@ export default function Dashboard() {
 
       {chartData.length > 0 && (
         <Card className="overflow-hidden border-zinc-200/60">
-          <CardHeader className="border-b border-zinc-100/80 bg-gradient-to-r from-white to-zinc-50/50 pb-4">
-            <CardTitle className="text-base font-semibold tracking-tight text-zinc-900">
+          <CardHeader className="border-b border-zinc-100/80 bg-gradient-to-r from-white to-zinc-50/50 pb-4 dark:border-zinc-700/70 dark:from-zinc-900 dark:to-zinc-900/40">
+            <CardTitle className="text-base font-semibold tracking-tight text-zinc-900 dark:text-zinc-100">
               Daily income vs expenses — {MONTH_NAMES[month - 1]}
             </CardTitle>
           </CardHeader>
@@ -181,8 +181,8 @@ export default function Dashboard() {
       )}
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 lg:gap-8">
-        <Card className="border-zinc-200/60">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 border-b border-zinc-100/80 pb-4">
+        <Card className="border-zinc-200/60 dark:border-zinc-800/65">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 border-b border-zinc-100/80 pb-4 dark:border-zinc-800/65">
             <CardTitle className="text-base font-semibold tracking-tight">
               Income — {MONTH_NAMES[month - 1]} {year}
             </CardTitle>
@@ -194,16 +194,16 @@ export default function Dashboard() {
           </CardHeader>
           <CardContent className="space-y-0 pt-2">
             {incomeData?.data.length === 0 && (
-              <p className="py-8 text-center text-sm text-zinc-400">No income recorded yet</p>
+              <p className="py-8 text-center text-sm text-zinc-400 dark:text-zinc-300">No income recorded yet</p>
             )}
             {incomeData?.data.map(item => (
               <div
                 key={item.id}
-                className="group flex items-center justify-between gap-3 rounded-lg py-2.5 pl-2 pr-2 transition-colors duration-150 hover:bg-zinc-50"
+                className="group flex items-center justify-between gap-3 rounded-lg py-2.5 pl-2 pr-2 transition-colors duration-150 hover:bg-zinc-50 dark:hover:bg-zinc-800/55"
               >
                 <div className="min-w-0">
-                  <p className="truncate text-sm font-medium text-zinc-900">{item.source}</p>
-                  <p className="text-xs text-zinc-400">{formatDate(item.date)}</p>
+                  <p className="truncate text-sm font-medium text-zinc-900 dark:text-zinc-100">{item.source}</p>
+                  <p className="text-xs text-zinc-400 dark:text-zinc-300">{formatDate(item.date)}</p>
                 </div>
                 <AmountBadge amount={item.amount} type="income" />
               </div>
@@ -211,8 +211,8 @@ export default function Dashboard() {
           </CardContent>
         </Card>
 
-        <Card className="border-zinc-200/60">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 border-b border-zinc-100/80 pb-4">
+        <Card className="border-zinc-200/60 dark:border-zinc-800/65">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 border-b border-zinc-100/80 pb-4 dark:border-zinc-800/65">
             <CardTitle className="text-base font-semibold tracking-tight">
               Expenses — {MONTH_NAMES[month - 1]} {year}
             </CardTitle>
@@ -224,17 +224,17 @@ export default function Dashboard() {
           </CardHeader>
           <CardContent className="space-y-0 pt-2">
             {expenseData?.data.length === 0 && (
-              <p className="py-8 text-center text-sm text-zinc-400">No expenses recorded yet</p>
+              <p className="py-8 text-center text-sm text-zinc-400 dark:text-zinc-300">No expenses recorded yet</p>
             )}
             {expenseData?.data.map(item => (
               <div
                 key={item.id}
-                className="group flex items-center justify-between gap-3 rounded-lg py-2.5 pl-2 pr-2 transition-colors duration-150 hover:bg-zinc-50"
+                className="group flex items-center justify-between gap-3 rounded-lg py-2.5 pl-2 pr-2 transition-colors duration-150 hover:bg-zinc-50 dark:hover:bg-zinc-800/55"
               >
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-medium text-zinc-900">{item.title}</p>
+                  <p className="truncate text-sm font-medium text-zinc-900 dark:text-zinc-100">{item.title}</p>
                   <div className="mt-0.5 flex flex-wrap items-center gap-1">
-                    <span className="text-xs text-zinc-400">{formatDate(item.date)}</span>
+                    <span className="text-xs text-zinc-400 dark:text-zinc-300">{formatDate(item.date)}</span>
                     {item.tags.slice(0, 2).map(tag => (
                       <TagBadge key={tag.id} tag={tag} />
                     ))}
@@ -246,9 +246,9 @@ export default function Dashboard() {
           </CardContent>
         </Card>
 
-        <Card className="border-teal-200/50 bg-gradient-to-b from-teal-50/40 to-transparent">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 border-b border-teal-100/60 pb-4">
-            <CardTitle className="text-base font-semibold tracking-tight text-teal-900">Loans given (active)</CardTitle>
+        <Card className="border-teal-200/50 bg-gradient-to-b from-teal-50/40 to-transparent dark:border-teal-900/50 dark:from-teal-950/25">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 border-b border-teal-100/60 pb-4 dark:border-teal-900/50">
+            <CardTitle className="text-base font-semibold tracking-tight text-teal-900 dark:text-teal-200">Loans given (active)</CardTitle>
             <Button asChild variant="ghost" size="sm" className="h-8 gap-1 text-zinc-500 hover:text-indigo-600">
               <Link to="/loans/given">
                 View all <ArrowRight className="h-3.5 w-3.5 opacity-70" />
@@ -260,16 +260,16 @@ export default function Dashboard() {
               Open loans (any month). The summary card counts only loans created in {MONTH_NAMES[month - 1]}.
             </p>
             {loanGivenData?.data.length === 0 && (
-              <p className="py-8 text-center text-sm text-zinc-400">No active loans given</p>
+              <p className="py-8 text-center text-sm text-zinc-400 dark:text-zinc-300">No active loans given</p>
             )}
             {loanGivenData?.data.map(loan => (
               <div
                 key={loan.id}
-                className="group flex items-center justify-between gap-3 rounded-lg py-2.5 pl-2 pr-2 transition-colors duration-150 hover:bg-white/60"
+                className="group flex items-center justify-between gap-3 rounded-lg py-2.5 pl-2 pr-2 transition-colors duration-150 hover:bg-white/60 dark:hover:bg-zinc-800/55"
               >
                 <div className="min-w-0">
-                  <p className="truncate text-sm font-medium text-zinc-900">{loan.person_name}</p>
-                  <p className="text-xs text-zinc-400">{formatDate(loan.date)}</p>
+                  <p className="truncate text-sm font-medium text-zinc-900 dark:text-zinc-100">{loan.person_name}</p>
+                  <p className="text-xs text-zinc-400 dark:text-zinc-300">{formatDate(loan.date)}</p>
                 </div>
                 <div className="flex shrink-0 items-center gap-2">
                   <LoanStatusBadge status={loan.status} />
@@ -280,9 +280,9 @@ export default function Dashboard() {
           </CardContent>
         </Card>
 
-        <Card className="border-rose-200/50 bg-gradient-to-b from-rose-50/35 to-transparent">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 border-b border-rose-100/60 pb-4">
-            <CardTitle className="text-base font-semibold tracking-tight text-rose-900">Loans taken (active)</CardTitle>
+        <Card className="border-rose-200/50 bg-gradient-to-b from-rose-50/35 to-transparent dark:border-rose-900/50 dark:from-rose-950/20">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 border-b border-rose-100/60 pb-4 dark:border-rose-900/45">
+            <CardTitle className="text-base font-semibold tracking-tight text-rose-900 dark:text-rose-200">Loans taken (active)</CardTitle>
             <Button asChild variant="ghost" size="sm" className="h-8 gap-1 text-zinc-500 hover:text-indigo-600">
               <Link to="/loans/taken">
                 View all <ArrowRight className="h-3.5 w-3.5 opacity-70" />
@@ -294,16 +294,16 @@ export default function Dashboard() {
               Open loans (any month). The summary card counts only loans created in {MONTH_NAMES[month - 1]}.
             </p>
             {loanTakenData?.data.length === 0 && (
-              <p className="py-8 text-center text-sm text-zinc-400">No active loans taken</p>
+              <p className="py-8 text-center text-sm text-zinc-400 dark:text-zinc-300">No active loans taken</p>
             )}
             {loanTakenData?.data.map(loan => (
               <div
                 key={loan.id}
-                className="group flex items-center justify-between gap-3 rounded-lg py-2.5 pl-2 pr-2 transition-colors duration-150 hover:bg-white/60"
+                className="group flex items-center justify-between gap-3 rounded-lg py-2.5 pl-2 pr-2 transition-colors duration-150 hover:bg-white/60 dark:hover:bg-zinc-800/55"
               >
                 <div className="min-w-0">
-                  <p className="truncate text-sm font-medium text-zinc-900">{loan.person_name}</p>
-                  <p className="text-xs text-zinc-400">{formatDate(loan.date)}</p>
+                  <p className="truncate text-sm font-medium text-zinc-900 dark:text-zinc-100">{loan.person_name}</p>
+                  <p className="text-xs text-zinc-400 dark:text-zinc-300">{formatDate(loan.date)}</p>
                 </div>
                 <div className="flex shrink-0 items-center gap-2">
                   <LoanStatusBadge status={loan.status} />

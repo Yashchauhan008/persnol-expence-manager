@@ -98,7 +98,7 @@ export default function Login() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-zinc-100 lg:flex-row">
+    <div className="flex min-h-screen flex-col bg-zinc-100 dark:bg-zinc-950 lg:flex-row">
       <div className="relative flex flex-col justify-between bg-gradient-to-br from-zinc-950 via-zinc-900 to-indigo-950 px-8 py-10 text-white lg:w-[46%] lg:min-h-screen lg:px-12 lg:py-14">
         <div className="pointer-events-none absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20width=%2240%22%20height=%2240%22%20viewBox=%220%200%2040%2040%22%3E%3Cg%20fill=%22none%22%20fill-opacity=%220.06%22%3E%3Cpath%20d=%22M0%2040h40V0H0z%22%20fill=%22%23fff%22/%3E%3C/g%3E%3C/svg%3E')] opacity-90" />
         <div className="pointer-events-none absolute -right-24 top-1/4 h-72 w-72 rounded-full bg-indigo-500/25 blur-3xl" />
@@ -135,10 +135,10 @@ export default function Login() {
       </div>
 
       <div className="flex flex-1 flex-col items-center justify-center px-6 py-12 lg:py-16">
-        <div className="w-full max-w-md rounded-2xl border border-zinc-200/80 bg-white/90 p-8 shadow-[0_24px_64px_-24px_rgba(15,23,42,0.18)] backdrop-blur-md transition-shadow duration-200 hover:shadow-[0_28px_72px_-24px_rgba(99,102,241,0.12)]">
+        <div className="w-full max-w-md rounded-2xl border border-zinc-200/80 bg-white/90 p-8 shadow-[0_24px_64px_-24px_rgba(15,23,42,0.18)] backdrop-blur-md transition-shadow duration-200 hover:shadow-[0_28px_72px_-24px_rgba(99,102,241,0.12)] dark:border-zinc-700/80 dark:bg-zinc-900/85 dark:shadow-[0_24px_64px_-24px_rgba(0,0,0,0.55)]">
           <div className="mb-8 space-y-2 text-center lg:text-left">
-            <h2 className="text-xl font-semibold tracking-tight text-zinc-900">Welcome back</h2>
-            <p className="text-sm leading-relaxed text-zinc-600">
+            <h2 className="text-xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-100">Welcome back</h2>
+            <p className="text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
               Sign in with Google to continue. This is the only sign-in method for this app.
             </p>
           </div>
@@ -149,12 +149,12 @@ export default function Login() {
               className="min-h-[44px] flex items-center justify-center [&>div]:w-full"
             />
             {!gsiReady && !busy && (
-              <p className="text-xs text-slate-500">Loading Google Sign-In…</p>
+              <p className="text-xs text-slate-500 dark:text-zinc-400">Loading Google Sign-In…</p>
             )}
-            {busy && <p className="text-xs text-slate-500">Completing sign-in…</p>}
+            {busy && <p className="text-xs text-slate-500 dark:text-zinc-400">Completing sign-in…</p>}
           </div>
 
-          <p className="mt-8 text-center text-[11px] leading-relaxed text-zinc-400">
+          <p className="mt-8 text-center text-[11px] leading-relaxed text-zinc-400 dark:text-zinc-500">
             By continuing, you agree that your name and email from Google may be stored to provide
             access to this application.
           </p>

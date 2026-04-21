@@ -35,8 +35,10 @@ export default function ListLoans() {
   };
 
   const isGiven = type === 'given';
-  const accentColor = isGiven ? 'text-emerald-700' : 'text-red-700';
-  const cardBg = isGiven ? 'bg-emerald-50 border-emerald-100' : 'bg-red-50 border-red-100';
+  const accentColor = isGiven ? 'text-emerald-700 dark:text-emerald-300' : 'text-red-700 dark:text-red-300';
+  const cardBg = isGiven
+    ? 'bg-emerald-50 border-emerald-100 dark:bg-emerald-950/25 dark:border-emerald-900/45'
+    : 'bg-red-50 border-red-100 dark:bg-red-950/20 dark:border-red-900/45';
 
   return (
     <div className="space-y-6 sm:space-y-8">
@@ -76,7 +78,7 @@ export default function ListLoans() {
         />
       )}
 
-      <div className="flex flex-wrap items-center gap-3 rounded-xl border border-zinc-200/60 bg-white/60 px-4 py-3 backdrop-blur-sm">
+      <div className="flex flex-wrap items-center gap-3 rounded-xl border border-zinc-200/60 bg-white/60 px-4 py-3 backdrop-blur-sm dark:border-zinc-700/70 dark:bg-zinc-900/50">
         <span className="text-sm font-medium text-zinc-600">Status</span>
         <Select value={status} onValueChange={v => { setStatus(v); setPage(1); }}>
           <SelectTrigger className="w-40">
@@ -94,12 +96,12 @@ export default function ListLoans() {
       {isLoading ? (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {[...Array(6)].map((_, i) => (
-            <div key={i} className="h-40 animate-pulse rounded-xl bg-zinc-100/90" />
+            <div key={i} className="h-40 animate-pulse rounded-xl bg-zinc-100/90 dark:bg-zinc-800/65" />
           ))}
         </div>
       ) : data?.data.length === 0 ? (
         <div className="py-16 text-center">
-          <p className="mb-4 text-sm text-zinc-400">No loans {type === 'given' ? 'given' : 'taken'} yet</p>
+          <p className="mb-4 text-sm text-zinc-400 dark:text-zinc-300">No loans {type === 'given' ? 'given' : 'taken'} yet</p>
           <Button asChild size="sm">
             <Link to={`/loans/new?type=${type}`}>Record your first loan</Link>
           </Button>
@@ -119,8 +121,8 @@ export default function ListLoans() {
                 <CardContent className="space-y-3 pt-5">
                   <div className="flex items-start justify-between gap-2">
                     <div className="min-w-0">
-                      <p className="font-semibold tracking-tight text-zinc-900">{loan.person_name}</p>
-                      <p className="text-xs text-zinc-400">{formatDate(loan.date)}</p>
+                      <p className="font-semibold tracking-tight text-zinc-900 dark:text-zinc-100">{loan.person_name}</p>
+                      <p className="text-xs text-zinc-400 dark:text-zinc-300">{formatDate(loan.date)}</p>
                     </div>
                     <LoanStatusBadge status={loan.status} />
                   </div>
@@ -140,14 +142,14 @@ export default function ListLoans() {
                     {loan.due_date && (
                       <div className="flex justify-between text-sm">
                         <span className="text-zinc-500">Due</span>
-                        <span className="text-zinc-800">{formatDate(loan.due_date)}</span>
+                        <span className="text-zinc-800 dark:text-zinc-200">{formatDate(loan.due_date)}</span>
                       </div>
                     )}
                   </div>
 
                   {/* Progress bar */}
                   <div className="space-y-1">
-                    <div className="flex justify-between text-xs text-zinc-400">
+                    <div className="flex justify-between text-xs text-zinc-400 dark:text-zinc-300">
                       <span>Settled</span>
                       <span>{settledPct}% ({formatCurrency(loan.amount - loan.remaining_amount)})</span>
                     </div>
@@ -159,7 +161,7 @@ export default function ListLoans() {
                     </div>
                   </div>
 
-                  {loan.note && <p className="truncate text-xs italic text-zinc-400">{loan.note}</p>}
+                  {loan.note && <p className="truncate text-xs italic text-zinc-400 dark:text-zinc-300">{loan.note}</p>}
 
                   <div className="flex items-center gap-1 pt-1">
                     <Button asChild variant="outline" size="sm" className="flex-1 text-xs">
@@ -176,7 +178,7 @@ export default function ListLoans() {
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="h-8 w-8 text-rose-500 hover:bg-rose-50 hover:text-rose-600"
+                      className="h-8 w-8 text-rose-500 hover:bg-rose-50 hover:text-rose-600 dark:hover:bg-rose-500/20"
                       onClick={() => setDeleteId(loan.id)}
                     >
                       <Trash2 className="h-3.5 w-3.5" />

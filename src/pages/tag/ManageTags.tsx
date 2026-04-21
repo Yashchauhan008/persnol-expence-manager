@@ -7,7 +7,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '
 import { ConfirmDialog } from '@/components/shared/ConfirmDialog';
 import { PageHeader } from '@/components/shared/PageHeader';
 import { useGetTags, useCreateTag, useUpdateTag, useDeleteTag } from '@/hooks/useTags';
-import { cn, formatCurrency, hexToRgba } from '@/lib/utils';
+import { useTheme } from '@/context/useTheme';
+import { cn, formatCurrency, getReadableTextColor, hexToRgba } from '@/lib/utils';
 import type { Tag } from '@/types/tag';
 
 const PRESET_COLORS = [
@@ -44,7 +45,7 @@ function TagColorPicker({
             onChange={e => setColor(e.target.value)}
             className="h-8 w-8 cursor-pointer overflow-hidden rounded-lg border border-zinc-200/90 transition-shadow duration-150 hover:shadow-md"
           />
-          <span className="text-xs tabular-nums text-zinc-400">{color}</span>
+          <span className="text-xs tabular-nums text-zinc-400 dark:text-zinc-300">{color}</span>
         </div>
       </div>
     </div>
@@ -52,6 +53,7 @@ function TagColorPicker({
 }
 
 export default function ManageTags() {
+  const { isDark } = useTheme();
   const { data: tags = [], isLoading } = useGetTags();
   const { mutate: createTag, isPending: creating } = useCreateTag();
   const { mutate: updateTag, isPending: updating } = useUpdateTag();
@@ -103,12 +105,12 @@ export default function ManageTags() {
       {isLoading ? (
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4 xl:grid-cols-5">
           {[...Array(8)].map((_, i) => (
-            <div key={i} className="h-[7.5rem] animate-pulse rounded-xl bg-zinc-100/80" />
+            <div key={i} className="h-[7.5rem] animate-pulse rounded-xl bg-zinc-100/80 dark:bg-zinc-800/60" />
           ))}
         </div>
       ) : tags.length === 0 ? (
         <div className="py-16 text-center">
-          <p className="mb-4 text-sm text-zinc-400">No tags yet. Tags help categorize your expenses.</p>
+          <p className="mb-4 text-sm text-zinc-400 dark:text-zinc-300">No tags yet. Tags help categorize your expenses.</p>
           <Button size="sm" onClick={openCreate}>
             Create your first tag
           </Button>
@@ -121,12 +123,14 @@ export default function ManageTags() {
               <article
                 key={tag.id}
                 className={cn(
-                  'group flex min-h-[7.5rem] flex-col justify-between rounded-xl border-y border-r border-zinc-200/80 border-l-[3px] px-3 py-3 shadow-sm',
+                  'group flex min-h-[7.5rem] flex-col justify-between rounded-xl border-y border-r border-zinc-400/80 border-l-[3px] px-3 py-3 shadow-sm',
                   'transition-[box-shadow,filter] duration-150 ease-out hover:shadow-md'
                 )}
                 style={{
                   borderLeftColor: tag.color,
-                  background: `linear-gradient(180deg, ${hexToRgba(tag.color, 0.07)} 0%, #ffffff 48%, #fafafa 100%)`,
+                  background: isDark
+                    ? `linear-gradient(180deg, ${hexToRgba(tag.color, 0.2)} 0%, rgba(24,24,27,0.92) 48%, rgba(9,9,11,0.98) 100%)`
+                    : `linear-gradient(180deg, ${hexToRgba(tag.color, 0.07)} 0%, #ffffff 48%, #fafafa 100%)`,
                 }}
               >
                 <div className="flex items-start justify-between gap-2">
@@ -136,7 +140,7 @@ export default function ManageTags() {
                       style={{ backgroundColor: tag.color }}
                       aria-hidden
                     />
-                    <h3 className="line-clamp-2 min-w-0 flex-1 break-words text-[13px] font-medium leading-snug tracking-tight text-zinc-900">
+                    <h3 className="line-clamp-2 min-w-0 flex-1 break-words text-[13px] font-medium leading-snug tracking-tight text-zinc-900 dark:text-zinc-100">
                       {tag.name}
                     </h3>
                   </div>
@@ -145,7 +149,7 @@ export default function ManageTags() {
                       type="button"
                       variant="ghost"
                       size="icon"
-                      className="h-7 w-7 text-zinc-400 hover:bg-zinc-200/60 hover:text-zinc-900"
+                      className="h-7 w-7 text-zinc-500 hover:bg-zinc-200/60 hover:text-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-700/60 dark:hover:text-zinc-100"
                       onClick={() => openEdit(tag)}
                     >
                       <Pencil className="h-3.5 w-3.5" />
@@ -154,7 +158,7 @@ export default function ManageTags() {
                       type="button"
                       variant="ghost"
                       size="icon"
-                      className="h-7 w-7 text-zinc-400 hover:bg-rose-50 hover:text-rose-600"
+                      className="h-7 w-7 text-zinc-500 hover:bg-rose-50 hover:text-rose-600 dark:text-zinc-300 dark:hover:bg-rose-500/20 dark:hover:text-rose-300"
                       onClick={() => setDeleteId(tag.id)}
                     >
                       <Trash2 className="h-3.5 w-3.5" />
@@ -163,7 +167,11 @@ export default function ManageTags() {
                 </div>
                 <p
                   className="mt-3 text-lg font-semibold tabular-nums tracking-tight sm:text-xl"
-                  style={{ color: `color-mix(in srgb, ${tag.color} 26%, rgb(24 24 27))` }}
+                  style={{
+                    color: isDark
+                      ? `color-mix(in srgb, ${tag.color} 34%, rgb(244 244 245))`
+                      : `color-mix(in srgb, ${tag.color} 30%, rgb(24 24 27))`,
+                  }}
                 >
                   {formatCurrency(total)}
                 </p>
@@ -192,10 +200,10 @@ export default function ManageTags() {
             </div>
             <TagColorPicker color={color} setColor={setColor} />
             <div className="flex items-center gap-2 pt-1">
-              <span className="text-sm text-zinc-500">Preview:</span>
+              <span className="text-sm text-zinc-500 dark:text-zinc-300">Preview:</span>
               <span
-                className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium text-white"
-                style={{ backgroundColor: color }}
+                className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold"
+                style={{ backgroundColor: color, color: getReadableTextColor(color) }}
               >
                 {name || 'Tag name'}
               </span>
@@ -229,10 +237,10 @@ export default function ManageTags() {
             </div>
             <TagColorPicker color={color} setColor={setColor} />
             <div className="flex items-center gap-2 pt-1">
-              <span className="text-sm text-zinc-500">Preview:</span>
+              <span className="text-sm text-zinc-500 dark:text-zinc-300">Preview:</span>
               <span
-                className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium text-white"
-                style={{ backgroundColor: color }}
+                className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold"
+                style={{ backgroundColor: color, color: getReadableTextColor(color) }}
               >
                 {name || 'Tag name'}
               </span>

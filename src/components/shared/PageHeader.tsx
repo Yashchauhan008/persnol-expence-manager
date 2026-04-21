@@ -14,15 +14,13 @@ export function PageHeader({ title, description, children, titleClassName }: Pag
       <div className="min-w-0 space-y-1.5">
         <h1
           className={cn(
-            'text-2xl font-semibold tracking-tight text-slate-900 sm:text-[1.65rem]',
+            'text-2xl font-semibold tracking-tight text-slate-900 dark:text-zinc-100 sm:text-[1.65rem]',
             titleClassName
           )}
         >
           {title}
         </h1>
-        {description ? (
-          <p className="max-w-2xl text-sm leading-relaxed text-slate-500">{description}</p>
-        ) : null}
+        {description ? <p className="max-w-2xl text-sm leading-relaxed text-slate-500 dark:text-zinc-400">{description}</p> : null}
       </div>
       {children ? (
         <div className="flex shrink-0 flex-wrap items-center gap-2 sm:justify-end">{children}</div>

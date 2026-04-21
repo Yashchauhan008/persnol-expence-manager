@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme inline {
   --color-background: #f4f4f5;
   --color-foreground: #0f172a;
@@ -22,6 +24,29 @@
   --color-warning: #d97706;
   --color-info: #2563eb;
   --radius: 0.75rem;
+}
+
+.dark {
+  --color-background: #09090b;
+  --color-foreground: #f4f4f5;
+  --color-primary: #818cf8;
+  --color-primary-foreground: #09090b;
+  --color-secondary: #18181b;
+  --color-secondary-foreground: #e4e4e7;
+  --color-muted: #27272a;
+  --color-muted-foreground: #a1a1aa;
+  --color-accent: #3f3f46;
+  --color-accent-foreground: #f4f4f5;
+  --color-destructive: #fb7185;
+  --color-destructive-foreground: #09090b;
+  --color-border: #3f3f46;
+  --color-input: #3f3f46;
+  --color-ring: #818cf8;
+  --color-card: #111827;
+  --color-card-foreground: #f3f4f6;
+  --color-success: #2dd4bf;
+  --color-warning: #f59e0b;
+  --color-info: #60a5fa;
 }
 
 * {
@@ -61,16 +86,24 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  color: #0f172a;
-  background-color: #f4f4f5;
+  color: var(--color-foreground);
+  background-color: var(--color-background);
   background-image:
     radial-gradient(ellipse 100% 120% at 50% -15%, rgba(99, 102, 241, 0.14), transparent 52%),
     radial-gradient(ellipse 70% 60% at 100% 0%, rgba(14, 165, 233, 0.07), transparent 45%),
     radial-gradient(ellipse 55% 45% at 0% 100%, rgba(244, 63, 94, 0.05), transparent 50%);
   background-attachment: fixed;
+  transition: background-color 180ms ease-out, color 180ms ease-out;
+}
+
+.dark body {
+  background-image:
+    radial-gradient(ellipse 100% 120% at 50% -15%, rgba(99, 102, 241, 0.2), transparent 52%),
+    radial-gradient(ellipse 70% 60% at 100% 0%, rgba(14, 165, 233, 0.12), transparent 45%),
+    radial-gradient(ellipse 55% 45% at 0% 100%, rgba(168, 85, 247, 0.12), transparent 50%);
 }
 
 ::selection {
   background-color: rgba(99, 102, 241, 0.22);
-  color: #0f172a;
+  color: var(--color-foreground);
 }

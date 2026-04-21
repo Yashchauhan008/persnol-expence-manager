@@ -88,7 +88,7 @@ export function DateRangeFilter({
       <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between lg:gap-6">
         <div className="flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-end">
           <div className="grid gap-1.5">
-            <Label htmlFor="filter-date-from" className="text-[11px] font-medium uppercase tracking-wide text-zinc-500">
+            <Label htmlFor="filter-date-from" className="text-[11px] font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
               From
             </Label>
             <Input
@@ -100,17 +100,14 @@ export function DateRangeFilter({
               className="w-full min-w-[10.5rem] sm:w-44"
             />
           </div>
-          <span
-            className="hidden items-center pb-2 text-zinc-300 sm:flex"
-            aria-hidden
-          >
+          <span className="hidden items-center pb-2 text-zinc-300 dark:text-zinc-600 sm:flex" aria-hidden>
             <ArrowRight className="h-4 w-4" strokeWidth={2} />
           </span>
-          <span className="flex items-center justify-center text-zinc-400 sm:hidden">
+          <span className="flex items-center justify-center text-zinc-400 dark:text-zinc-500 sm:hidden">
             <span className="text-xs font-medium">to</span>
           </span>
           <div className="grid gap-1.5">
-            <Label htmlFor="filter-date-to" className="text-[11px] font-medium uppercase tracking-wide text-zinc-500">
+            <Label htmlFor="filter-date-to" className="text-[11px] font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
               To
             </Label>
             <Input
@@ -124,14 +121,14 @@ export function DateRangeFilter({
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2 border-t border-zinc-100/90 pt-3 lg:border-t-0 lg:pt-0">
+        <div className="flex flex-wrap items-center gap-2 border-t border-zinc-100/90 pt-3 dark:border-zinc-700/70 lg:border-t-0 lg:pt-0">
           {presets.map(p => (
             <Button
               key={p.id}
               type="button"
               variant="secondary"
               size="sm"
-              className="h-8 rounded-full border border-zinc-200/80 bg-white/80 px-3 text-xs font-medium text-zinc-700 shadow-sm transition-[background-color,box-shadow,transform] duration-150 hover:border-indigo-200 hover:bg-indigo-50/60 hover:text-indigo-900 active:scale-[0.98]"
+              className="h-8 rounded-full border border-zinc-200/80 bg-white/80 px-3 text-xs font-medium text-zinc-700 shadow-sm transition-[background-color,box-shadow,transform] duration-150 hover:border-indigo-200 hover:bg-indigo-50/60 hover:text-indigo-900 active:scale-[0.98] dark:border-zinc-700/80 dark:bg-zinc-900/70 dark:text-zinc-200 dark:hover:border-indigo-500/40 dark:hover:bg-indigo-500/20 dark:hover:text-indigo-100"
               onClick={() => applyPreset(p.id, setBoth)}
             >
               {p.label}
@@ -142,7 +139,7 @@ export function DateRangeFilter({
               type="button"
               variant="ghost"
               size="sm"
-              className="h-8 text-xs text-zinc-500 hover:text-zinc-900"
+              className="h-8 text-xs text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
               onClick={onClearDates}
             >
               Clear dates

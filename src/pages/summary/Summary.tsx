@@ -66,20 +66,21 @@ function TagBreakdownChart({ data }: { data: ReturnType<typeof useGetDailySummar
   const pieData = data.expenses_by_tag.map(t => ({ ...t, name: t.tag_name }));
   return (
     <Card className="overflow-hidden border-zinc-200/60">
-      <CardHeader className="border-b border-zinc-100/80 bg-gradient-to-r from-white to-zinc-50/50">
+      <CardHeader className="border-b border-zinc-100/80 bg-gradient-to-r from-white to-zinc-50/50 dark:border-zinc-700/70 dark:from-zinc-900 dark:to-zinc-900/40">
         <CardTitle className="text-base font-semibold tracking-tight">Expenses by tag</CardTitle>
       </CardHeader>
       <CardContent className="pt-6">
-        <ResponsiveContainer width="100%" height={240}>
+        <div className="h-[17rem] w-full sm:h-[20rem] xl:h-[22rem]">
+        <ResponsiveContainer width="100%" height="100%">
           <PieChart>
             <Pie
               data={pieData}
               dataKey="total"
               nameKey="name"
               cx="50%"
-              cy="48%"
-              innerRadius={52}
-              outerRadius={84}
+              cy="46%"
+              innerRadius="48%"
+              outerRadius="78%"
               paddingAngle={2}
               stroke="rgba(255,255,255,0.85)"
               strokeWidth={2}
@@ -93,15 +94,16 @@ function TagBreakdownChart({ data }: { data: ReturnType<typeof useGetDailySummar
             <Tooltip content={<PremiumPieTooltip />} animationDuration={150} />
             <Legend
               verticalAlign="bottom"
-              height={40}
+              height={46}
               iconType="circle"
               iconSize={8}
               formatter={(value) => (
-                <span style={{ fontSize: 11, fontWeight: 500, color: '#52525b' }}>{String(value)}</span>
+                <span className="text-[11px] font-medium text-zinc-600 dark:text-zinc-300">{String(value)}</span>
               )}
             />
           </PieChart>
         </ResponsiveContainer>
+        </div>
       </CardContent>
     </Card>
   );
@@ -136,7 +138,7 @@ function DailySummaryTab() {
               type="button"
               variant="secondary"
               size="sm"
-              className="h-8 rounded-full border border-zinc-200/80 bg-white/80 px-3 text-xs font-medium shadow-sm transition-[background-color,box-shadow,transform] duration-150 hover:border-indigo-200 hover:bg-indigo-50/60 hover:text-indigo-900 active:scale-[0.98]"
+              className="h-8 rounded-full border border-zinc-200/80 bg-white/80 px-3 text-xs font-medium shadow-sm transition-[background-color,box-shadow,transform] duration-150 hover:border-indigo-200 hover:bg-indigo-50/60 hover:text-indigo-900 active:scale-[0.98] dark:border-zinc-700/80 dark:bg-zinc-900/70 dark:hover:border-indigo-500/40 dark:hover:bg-indigo-500/20 dark:hover:text-indigo-100"
               onClick={() => setDate(todayISO())}
             >
               Today
@@ -145,7 +147,7 @@ function DailySummaryTab() {
               type="button"
               variant="secondary"
               size="sm"
-              className="h-8 rounded-full border border-zinc-200/80 bg-white/80 px-3 text-xs font-medium shadow-sm transition-[background-color,box-shadow,transform] duration-150 hover:border-indigo-200 hover:bg-indigo-50/60 hover:text-indigo-900 active:scale-[0.98]"
+              className="h-8 rounded-full border border-zinc-200/80 bg-white/80 px-3 text-xs font-medium shadow-sm transition-[background-color,box-shadow,transform] duration-150 hover:border-indigo-200 hover:bg-indigo-50/60 hover:text-indigo-900 active:scale-[0.98] dark:border-zinc-700/80 dark:bg-zinc-900/70 dark:hover:border-indigo-500/40 dark:hover:bg-indigo-500/20 dark:hover:text-indigo-100"
               onClick={() => setDate(addDaysIso(todayISO(), -1))}
             >
               Yesterday
@@ -154,7 +156,7 @@ function DailySummaryTab() {
         </div>
       </FilterSurface>
       {isLoading ? (
-        <div className="h-44 animate-pulse rounded-xl bg-zinc-100/80" />
+        <div className="h-44 animate-pulse rounded-xl bg-zinc-100/80 dark:bg-zinc-800/60" />
       ) : (
         <>
           <SummaryCards data={data} />
@@ -239,7 +241,7 @@ function MonthlySummaryTab() {
               type="button"
               variant="secondary"
               size="sm"
-              className="h-8 rounded-full border border-zinc-200/80 bg-white/80 px-3 text-xs font-medium shadow-sm transition-[background-color,box-shadow,transform] duration-150 hover:border-indigo-200 hover:bg-indigo-50/60 hover:text-indigo-900 active:scale-[0.98]"
+              className="h-8 rounded-full border border-zinc-200/80 bg-white/80 px-3 text-xs font-medium shadow-sm transition-[background-color,box-shadow,transform] duration-150 hover:border-indigo-200 hover:bg-indigo-50/60 hover:text-indigo-900 active:scale-[0.98] dark:border-zinc-700/80 dark:bg-zinc-900/70 dark:hover:border-indigo-500/40 dark:hover:bg-indigo-500/20 dark:hover:text-indigo-100"
               onClick={goThisMonth}
             >
               This month
@@ -248,7 +250,7 @@ function MonthlySummaryTab() {
               type="button"
               variant="secondary"
               size="sm"
-              className="h-8 rounded-full border border-zinc-200/80 bg-white/80 px-3 text-xs font-medium shadow-sm transition-[background-color,box-shadow,transform] duration-150 hover:border-indigo-200 hover:bg-indigo-50/60 hover:text-indigo-900 active:scale-[0.98]"
+              className="h-8 rounded-full border border-zinc-200/80 bg-white/80 px-3 text-xs font-medium shadow-sm transition-[background-color,box-shadow,transform] duration-150 hover:border-indigo-200 hover:bg-indigo-50/60 hover:text-indigo-900 active:scale-[0.98] dark:border-zinc-700/80 dark:bg-zinc-900/70 dark:hover:border-indigo-500/40 dark:hover:bg-indigo-500/20 dark:hover:text-indigo-100"
               onClick={goPrevMonth}
             >
               Previous month
@@ -258,13 +260,13 @@ function MonthlySummaryTab() {
       </FilterSurface>
 
       {isLoading ? (
-        <div className="h-44 animate-pulse rounded-xl bg-zinc-100/80" />
+        <div className="h-44 animate-pulse rounded-xl bg-zinc-100/80 dark:bg-zinc-800/60" />
       ) : (
         <>
           <SummaryCards data={data} />
           {chartData.length > 0 && (
             <Card className="overflow-hidden border-zinc-200/60">
-              <CardHeader className="border-b border-zinc-100/80 bg-gradient-to-r from-white to-zinc-50/50">
+              <CardHeader className="border-b border-zinc-100/80 bg-gradient-to-r from-white to-zinc-50/50 dark:border-zinc-700/70 dark:from-zinc-900 dark:to-zinc-900/40">
                 <CardTitle className="text-base font-semibold tracking-tight">
                   Daily breakdown — {MONTH_NAMES[parseInt(month, 10) - 1]} {year}
                 </CardTitle>
@@ -320,7 +322,7 @@ function YearlySummaryTab() {
               type="button"
               variant="secondary"
               size="sm"
-              className="h-8 rounded-full border border-zinc-200/80 bg-white/80 px-3 text-xs font-medium shadow-sm transition-[background-color,box-shadow,transform] duration-150 hover:border-indigo-200 hover:bg-indigo-50/60 hover:text-indigo-900 active:scale-[0.98]"
+              className="h-8 rounded-full border border-zinc-200/80 bg-white/80 px-3 text-xs font-medium shadow-sm transition-[background-color,box-shadow,transform] duration-150 hover:border-indigo-200 hover:bg-indigo-50/60 hover:text-indigo-900 active:scale-[0.98] dark:border-zinc-700/80 dark:bg-zinc-900/70 dark:hover:border-indigo-500/40 dark:hover:bg-indigo-500/20 dark:hover:text-indigo-100"
               onClick={() => setYear(yNow)}
             >
               This year
@@ -329,7 +331,7 @@ function YearlySummaryTab() {
               type="button"
               variant="secondary"
               size="sm"
-              className="h-8 rounded-full border border-zinc-200/80 bg-white/80 px-3 text-xs font-medium shadow-sm transition-[background-color,box-shadow,transform] duration-150 hover:border-indigo-200 hover:bg-indigo-50/60 hover:text-indigo-900 active:scale-[0.98]"
+              className="h-8 rounded-full border border-zinc-200/80 bg-white/80 px-3 text-xs font-medium shadow-sm transition-[background-color,box-shadow,transform] duration-150 hover:border-indigo-200 hover:bg-indigo-50/60 hover:text-indigo-900 active:scale-[0.98] dark:border-zinc-700/80 dark:bg-zinc-900/70 dark:hover:border-indigo-500/40 dark:hover:bg-indigo-500/20 dark:hover:text-indigo-100"
               onClick={() => setYear(yNow - 1)}
             >
               Last year
@@ -339,13 +341,13 @@ function YearlySummaryTab() {
       </FilterSurface>
 
       {isLoading ? (
-        <div className="h-44 animate-pulse rounded-xl bg-zinc-100/80" />
+        <div className="h-44 animate-pulse rounded-xl bg-zinc-100/80 dark:bg-zinc-800/60" />
       ) : (
         <>
           <SummaryCards data={data} />
           {chartData.length > 0 && (
             <Card className="overflow-hidden border-zinc-200/60">
-              <CardHeader className="border-b border-zinc-100/80 bg-gradient-to-r from-white to-zinc-50/50">
+              <CardHeader className="border-b border-zinc-100/80 bg-gradient-to-r from-white to-zinc-50/50 dark:border-zinc-700/70 dark:from-zinc-900 dark:to-zinc-900/40">
                 <CardTitle className="text-base font-semibold tracking-tight">Monthly breakdown — {year}</CardTitle>
               </CardHeader>
               <CardContent className="pt-6">

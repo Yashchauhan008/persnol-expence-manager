@@ -13,8 +13,11 @@ import LoanDetail from '@/pages/loan/LoanDetail';
 import ManageTags from '@/pages/tag/ManageTags';
 import Summary from '@/pages/summary/Summary';
 import Login from '@/pages/auth/Login';
+import { useTheme } from '@/context/useTheme';
 
 export default function App() {
+  const { isDark } = useTheme();
+
   return (
     <BrowserRouter>
       <Routes>
@@ -44,7 +47,18 @@ export default function App() {
           </Route>
         </Route>
       </Routes>
-      <Toaster position="top-right" />
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          style: isDark
+            ? {
+                background: 'rgba(24, 24, 27, 0.94)',
+                color: '#f4f4f5',
+                border: '1px solid rgba(63, 63, 70, 0.9)',
+              }
+            : undefined,
+        }}
+      />
     </BrowserRouter>
   );
 }
