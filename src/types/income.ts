@@ -6,6 +6,7 @@ export interface Income {
   source: string;
   note?: string;
   date: string;
+  chart_visibility: boolean;
   created_at: string;
   updated_at: string;
   entry_kind?: IncomeEntryKind;
@@ -16,6 +17,7 @@ export interface CreateIncomeData {
   source: string;
   note?: string;
   date: string;
+  chart_visibility: boolean;
 }
 
 export interface UpdateIncomeData {
@@ -23,6 +25,7 @@ export interface UpdateIncomeData {
   source?: string;
   note?: string | null;
   date?: string;
+  chart_visibility?: boolean;
 }
 
 export interface IncomeListParams {

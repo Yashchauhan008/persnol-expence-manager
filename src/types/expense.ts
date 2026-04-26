@@ -8,6 +8,7 @@ export interface Expense {
   title: string;
   note?: string;
   date: string;
+  chart_visibility: boolean;
   tags: Tag[];
   created_at: string;
   updated_at: string;
@@ -20,6 +21,7 @@ export interface CreateExpenseData {
   note?: string;
   date: string;
   tag_ids: string[];
+  chart_visibility: boolean;
 }
 
 export interface UpdateExpenseData {
@@ -28,6 +30,7 @@ export interface UpdateExpenseData {
   note?: string | null;
   date?: string;
   tag_ids?: string[];
+  chart_visibility?: boolean;
 }
 
 export interface ExpenseListParams {

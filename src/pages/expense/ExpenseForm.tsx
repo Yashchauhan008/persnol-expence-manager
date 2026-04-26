@@ -27,6 +27,7 @@ export default function ExpenseForm() {
   const [note, setNote] = useState('');
   const [date, setDate] = useState(() => (id ? '' : todayISO()));
   const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
+  const [chartVisibility, setChartVisibility] = useState(true);
 
   useEffect(() => {
     if (!id) {
@@ -41,6 +42,7 @@ export default function ExpenseForm() {
       setNote(expense.note ?? '');
       setDate(toInputDate(expense.date));
       setSelectedTags(expense.tags ?? []);
+      setChartVisibility(expense.chart_visibility ?? true);
     }
   }, [expense, id]);
 
@@ -58,6 +60,7 @@ export default function ExpenseForm() {
       note: note || undefined,
       date,
       tag_ids: selectedTags.map(t => t.id),
+      chart_visibility: chartVisibility,
     };
 
     if (isEditing && id) {
@@ -167,6 +170,19 @@ export default function ExpenseForm() {
                 onChange={e => setNote(e.target.value)}
                 rows={3}
               />
+            </div>
+
+            <div className="flex items-center space-x-2 rounded-md border p-3">
+              <input
+                id="chart-visibility"
+                type="checkbox"
+                className="h-4 w-4 accent-indigo-600"
+                checked={chartVisibility}
+                onChange={e => setChartVisibility(e.target.checked)}
+              />
+              <Label htmlFor="chart-visibility" className="cursor-pointer">
+                Show this expense in dashboard chart
+              </Label>
             </div>
 
             <div className="flex gap-2 pt-2">

@@ -22,6 +22,7 @@ export default function IncomeForm() {
   const [source, setSource] = useState('');
   const [note, setNote] = useState('');
   const [date, setDate] = useState(() => (id ? '' : todayISO()));
+  const [chartVisibility, setChartVisibility] = useState(true);
 
   useEffect(() => {
     if (!id) {
@@ -35,12 +36,19 @@ export default function IncomeForm() {
       setSource(income.source);
       setNote(income.note ?? '');
       setDate(toInputDate(income.date));
+      setChartVisibility(income.chart_visibility ?? true);
     }
   }, [income, id]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const payload = { amount: parseFloat(amount), source, note: note || undefined, date };
+    const payload = {
+      amount: parseFloat(amount),
+      source,
+      note: note || undefined,
+      date,
+      chart_visibility: chartVisibility,
+    };
 
     if (isEditing && id) {
       update({ id, data: payload }, { onSuccess: () => navigate('/income') });
@@ -109,6 +117,19 @@ export default function IncomeForm() {
                 onChange={e => setNote(e.target.value)}
                 rows={3}
               />
+            </div>
+
+            <div className="flex items-center space-x-2 rounded-md border p-3">
+              <input
+                id="chart-visibility"
+                type="checkbox"
+                className="h-4 w-4 accent-indigo-600"
+                checked={chartVisibility}
+                onChange={e => setChartVisibility(e.target.checked)}
+              />
+              <Label htmlFor="chart-visibility" className="cursor-pointer">
+                Show this income in dashboard chart
+              </Label>
             </div>
 
             <div className="flex gap-2 pt-2">
