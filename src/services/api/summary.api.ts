@@ -8,3 +8,6 @@ export const getMonthlySummary = (year?: number, month?: number) =>
 
 export const getYearlySummary = (year?: number) =>
   httpRequest.get('/summary/yearly', { params: { year } });
+
+export const getRangeSummary = (params: { from?: string; to?: string; year?: number; months?: string }) =>
+  httpRequest.get('/summary/range', { params });

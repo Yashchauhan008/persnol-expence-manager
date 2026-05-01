@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { getDailySummary, getMonthlySummary, getYearlySummary } from '@/services/api/summary.api';
+import { getDailySummary, getMonthlySummary, getRangeSummary, getYearlySummary } from '@/services/api/summary.api';
 import type { Summary } from '@/types/summary';
 import { useAuth } from '@/context/AuthContext';
 
@@ -38,5 +38,17 @@ export function useGetYearlySummary(year?: number) {
       const res = await getYearlySummary(year);
       return res.data.data as Summary;
     },
+  });
+}
+
+export function useGetRangeSummary(params: { from?: string; to?: string; year?: number; months?: string }) {
+  const { user } = useAuth();
+  return useQuery({
+    queryKey: ['summary', 'range', user?.id, params],
+    queryFn: async () => {
+      const res = await getRangeSummary(params);
+      return res.data.data as Summary;
+    },
+    enabled: (!!params.from && !!params.to) || (!!params.year && !!params.months),
   });
 }
