@@ -85,10 +85,10 @@ export default function Dashboard() {
 
   const chartData = useMemo(() => {
     return summary?.daily_breakdown?.map(d => {
-      const dateParts = d.label.split('-');
+      const dateParts = (d.label || '').split('-');
       const label = rangeType === 'month' && selectedMonths.length === 1 
-        ? dateParts[2] 
-        : `${MONTH_NAMES[parseInt(dateParts[1], 10) - 1]} ${dateParts[2]}`;
+        ? (dateParts[2] || String(d.day || '')) 
+        : `${MONTH_NAMES[parseInt(dateParts[1], 10) - 1] || ''} ${dateParts[2] || ''}`;
       return {
         day: label,
         Income: d.income,

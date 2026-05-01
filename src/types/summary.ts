@@ -6,7 +6,8 @@ export interface TagBreakdown {
 }
 
 export interface DailyBreakdown {
-  day: number;
+  day?: number;
+  label?: string;
   income: number;
   expense: number;
 }

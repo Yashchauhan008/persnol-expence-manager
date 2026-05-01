@@ -192,7 +192,7 @@ function MonthlySummaryTab() {
 
   const chartData =
     data?.daily_breakdown?.map(d => ({
-      day: String(d.day),
+      day: d.label ? d.label.split('-')[2] : String(d.day || ''),
       Income: d.income,
       Expenses: d.expense,
     })) ?? [];
