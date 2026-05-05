@@ -11,3 +11,6 @@ export const getYearlySummary = (year?: number) =>
 
 export const getRangeSummary = (params: { from?: string; to?: string; year?: number; months?: string }) =>
   httpRequest.get('/summary/range', { params });
+
+export const getLifetimeSummary = () =>
+  httpRequest.get('/summary/lifetime');

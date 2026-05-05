@@ -15,7 +15,7 @@ import {
 import { AmountBadge } from '@/components/shared/AmountBadge';
 import { PageHeader } from '@/components/shared/PageHeader';
 import { FilterSurface } from '@/components/shared/FilterSurface';
-import { useGetDailySummary, useGetMonthlySummary, useGetYearlySummary } from '@/hooks/useSummary';
+import { useGetDailySummary, useGetMonthlySummary, useGetYearlySummary, useGetLifetimeSummary } from '@/hooks/useSummary';
 import { addDaysIso, todayISO } from '@/lib/utils';
 import { IncomeExpenseBarChart, PremiumPieTooltip } from '@/lib/chart';
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts';
@@ -362,6 +362,56 @@ function YearlySummaryTab() {
   );
 }
 
+function LifetimeSummaryTab() {
+  const { data, isLoading } = useGetLifetimeSummary();
+
+  const chartData =
+    data?.daily_breakdown?.map(d => {
+      const parts = (d.label || '').split('-');
+      return {
+        month: `${MONTH_NAMES[parseInt(parts[1], 10) - 1]} ${parts[0]}`,
+        Income: d.income,
+        Expenses: d.expense,
+      };
+    }) ?? [];
+
+  return (
+    <div className="space-y-6">
+      <FilterSurface
+        title="Lifetime"
+        icon={CalendarDays}
+        description="Complete financial history from the very first record. Monthly breakdown included."
+      >
+        <div className="flex items-center justify-between">
+          <p className="text-xs font-medium text-zinc-500 uppercase">Showing all-time records</p>
+          <div className="h-8 w-24 rounded-full bg-indigo-50 flex items-center justify-center dark:bg-indigo-950/30">
+             <span className="text-[10px] font-bold text-indigo-600 dark:text-indigo-400">LIFETIME</span>
+          </div>
+        </div>
+      </FilterSurface>
+
+      {isLoading ? (
+        <div className="h-44 animate-pulse rounded-xl bg-zinc-100/80 dark:bg-zinc-800/60" />
+      ) : (
+        <>
+          <SummaryCards data={data} />
+          {chartData.length > 0 && (
+            <Card className="overflow-hidden border-zinc-200/60">
+              <CardHeader className="border-b border-zinc-100/80 bg-gradient-to-r from-white to-zinc-50/50 dark:border-zinc-700/70 dark:from-zinc-900 dark:to-zinc-900/40">
+                <CardTitle className="text-base font-semibold tracking-tight">Monthly Trend — All Time</CardTitle>
+              </CardHeader>
+              <CardContent className="pt-6">
+                <IncomeExpenseBarChart data={chartData} xKey="month" height={268} />
+              </CardContent>
+            </Card>
+          )}
+          <TagBreakdownChart data={data} />
+        </>
+      )}
+    </div>
+  );
+}
+
 export default function Summary() {
   return (
     <div className="space-y-6 sm:space-y-8">
@@ -380,6 +430,9 @@ export default function Summary() {
           <TabsTrigger value="yearly" className="min-w-[5.5rem]">
             Yearly
           </TabsTrigger>
+          <TabsTrigger value="lifetime" className="min-w-[5.5rem]">
+            Lifetime
+          </TabsTrigger>
         </TabsList>
         <TabsContent value="daily" className="mt-0 focus-visible:ring-0">
           <DailySummaryTab />
@@ -389,6 +442,9 @@ export default function Summary() {
         </TabsContent>
         <TabsContent value="yearly" className="mt-0 focus-visible:ring-0">
           <YearlySummaryTab />
+        </TabsContent>
+        <TabsContent value="lifetime" className="mt-0 focus-visible:ring-0">
+          <LifetimeSummaryTab />
         </TabsContent>
       </Tabs>
     </div>

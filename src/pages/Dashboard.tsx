@@ -7,7 +7,7 @@ import { AmountBadge } from '@/components/shared/AmountBadge';
 import { TagBadge } from '@/components/shared/TagBadge';
 import { LoanStatusBadge } from '@/components/shared/LoanStatusBadge';
 import { PageHeader } from '@/components/shared/PageHeader';
-import { useGetRangeSummary } from '@/hooks/useSummary';
+import { useGetRangeSummary, useGetLifetimeSummary } from '@/hooks/useSummary';
 import { useGetIncomes } from '@/hooks/useIncome';
 import { useGetExpenses } from '@/hooks/useExpenses';
 import { useGetLoans } from '@/hooks/useLoans';
@@ -54,7 +54,7 @@ function StatCard({
 }
 
 export default function Dashboard() {
-  const [rangeType, setRangeType] = useState<'month' | 'custom'>('month');
+  const [rangeType, setRangeType] = useState<'month' | 'custom' | 'lifetime'>('month');
   const [selectedMonths, setSelectedMonths] = useState<number[]>([new Date().getMonth() + 1]);
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [customRange, setCustomRange] = useState({ from: todayISO(), to: todayISO() });
@@ -67,6 +67,9 @@ export default function Dashboard() {
       const { to } = getMonthIsoRange(selectedYear, maxMonth);
       return { from, to };
     }
+    if (rangeType === 'lifetime') {
+      return { from: undefined, to: undefined };
+    }
     return customRange;
   }, [rangeType, selectedYear, selectedMonths, customRange]);
 
@@ -77,7 +80,11 @@ export default function Dashboard() {
     return customRange;
   }, [rangeType, selectedYear, selectedMonths, customRange]);
 
-  const { data: summary, isLoading: summaryLoading } = useGetRangeSummary(summaryParams);
+  const { data: rangeSummary, isLoading: rangeSummaryLoading } = useGetRangeSummary(summaryParams);
+  const { data: lifetimeSummary, isLoading: lifetimeSummaryLoading } = useGetLifetimeSummary();
+
+  const summary = rangeType === 'lifetime' ? lifetimeSummary : rangeSummary;
+  const summaryLoading = rangeType === 'lifetime' ? lifetimeSummaryLoading : rangeSummaryLoading;
   const { data: incomeData } = useGetIncomes({ limit: 5, from, to });
   const { data: expenseData } = useGetExpenses({ limit: 5, from, to });
   const { data: loanGivenData } = useGetLoans({ type: 'given', status: 'pending', limit: 3 });
@@ -88,7 +95,9 @@ export default function Dashboard() {
       const dateParts = (d.label || '').split('-');
       const label = rangeType === 'month' && selectedMonths.length === 1 
         ? (dateParts[2] || String(d.day || '')) 
-        : `${MONTH_NAMES[parseInt(dateParts[1], 10) - 1] || ''} ${dateParts[2] || ''}`;
+        : rangeType === 'lifetime'
+          ? `${MONTH_NAMES[parseInt(dateParts[1], 10) - 1] || ''} ${dateParts[0] || ''}`
+          : `${MONTH_NAMES[parseInt(dateParts[1], 10) - 1] || ''} ${dateParts[2] || ''}`;
       return {
         day: label,
         Income: d.income,
@@ -120,7 +129,9 @@ export default function Dashboard() {
         description={
           rangeType === 'month' 
             ? `${selectedMonths.length > 1 ? 'Selected Months' : MONTH_NAMES[selectedMonths[0] - 1]} ${selectedYear} — totals, chart, and recent activity.` 
-            : `Custom range: ${formatDate(from)} to ${formatDate(to)}`
+            : rangeType === 'lifetime'
+              ? "All-time summary — complete financial history and monthly trends."
+              : `Custom range: ${formatDate(from)} to ${formatDate(to)}`
         }
       >
         <Button asChild size="sm">
@@ -179,6 +190,17 @@ export default function Dashboard() {
             >
               <Calendar className="h-3.5 w-3.5" />
               Custom
+            </button>
+            <button
+              onClick={() => setRangeType('lifetime')}
+              className={cn(
+                "flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 border",
+                rangeType === 'lifetime'
+                  ? "bg-indigo-600 border-indigo-600 text-white shadow-md shadow-indigo-500/20"
+                  : "bg-white border-zinc-200 text-zinc-500 hover:border-zinc-300 hover:bg-zinc-50 dark:bg-zinc-900 dark:border-zinc-800 dark:text-zinc-400"
+              )}
+            >
+              Lifetime
             </button>
           </div>
 
