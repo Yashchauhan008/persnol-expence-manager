@@ -131,7 +131,7 @@ export default function Dashboard() {
             ? `${selectedMonths.length > 1 ? 'Selected Months' : MONTH_NAMES[selectedMonths[0] - 1]} ${selectedYear} — totals, chart, and recent activity.` 
             : rangeType === 'lifetime'
               ? "All-time summary — complete financial history and monthly trends."
-              : `Custom range: ${formatDate(from)} to ${formatDate(to)}`
+              : `Custom range: ${formatDate(from!)} to ${formatDate(to!)}`
         }
       >
         <Button asChild size="sm">
